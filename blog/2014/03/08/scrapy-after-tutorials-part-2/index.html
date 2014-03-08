@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>BgRva</title>
+  <title>Scrapy After the Tutorials Part 2 - BgRva</title>
   <meta name="author" content="Michael Pastore">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://BgRva.github.io">
+  <link rel="canonical" href="http://BgRva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="BgRva" type="application/atom+xml">
@@ -63,15 +63,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2014/03/08/scrapy-after-tutorials-part-2/">Scrapy After the Tutorials Part 2</a></h1>
+      <h1 class="entry-title">Scrapy After the Tutorials Part 2</h1>
     
     
       <p class="meta">
@@ -94,7 +91,7 @@
   </header>
 
 
-  <div class="entry-content"><p>As described in the previous post, the scraper will be crawling over extended periods of time.  Filtering out links which do not need to be crawled is one way of improving performance: less links to crawl = less items to process.  In this example, I hope to demonstrate how to filter the links to be crawled.  So how does the scraper determine which links to follow and how can we modify this behavior?  Using step #7 in the <a href="http://doc.scrapy.org/en/latest/topics/architecture.html#data-flow">Data Flow</a> as reference:</p>
+<div class="entry-content"><p>As described in the previous post, the scraper will be crawling over extended periods of time.  Filtering out links which do not need to be crawled is one way of improving performance: less links to crawl = less items to process.  In this example, I hope to demonstrate how to filter the links to be crawled.  So how does the scraper determine which links to follow and how can we modify this behavior?  Using step #7 in the <a href="http://doc.scrapy.org/en/latest/topics/architecture.html#data-flow">Data Flow</a> as reference:</p>
 
 <blockquote><p>The Spider processes the Response and returns scraped Items
 and new Requests (to follow) to the Engine.</p></blockquote>
@@ -248,22 +245,16 @@ and new Requests (to follow) to the Engine.</p></blockquote>
 
 <p>Next: Some MongoDB</p>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/04/scrapy-after-tutorials-part-1/">Scrapy After the Tutorials Part 1</a></h1>
-    
-    
-      <p class="meta">
-        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Michael Pastore</span></span>
+
+      
 
 
 
@@ -275,163 +266,32 @@ and new Requests (to follow) to the Engine.</p></blockquote>
   
 
 
-<time datetime="2014-03-04T17:27:39-08:00" pubdate data-updated="true">Mar 4<span>th</span>, 2014</time>
-        
-      </p>
+<time datetime="2014-03-08T09:23:51-08:00" pubdate data-updated="true">Mar 8<span>th</span>, 2014</time>
+      
+
+
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><p>I was given the task of building a scalable web scraper to harvest connections between domains of a specific industry in order to generate a network model of that industry’s online presence.  The scraper will need to run for a period of time, (say a week), and the resulting harvest would be the raw data from which the model would be generated.  This harvesting process will need to be repeatable to create ‘snapshots’ of the network for future longitudinal analysis.  The implementation will use <a href="http://www.yahoo.com" title="Scrapy">scrapy</a> with a <a href="http://www.mongodb.org" title="MongoDB">MongoDB</a> back end on a linux platform to be run (ultimately) in AWS.</p>
-
-<p>This post (and subsequent ones) will provide some code samples and documentation of issues faced during the process of getting the scraper operational.  The intent is to help bridge the gap between the initial scrapy tutorials and real-world code.  The examples assume you have scrapy installed and running, and have at least worked through the basic tutorials.  I did find many of the <a href="https://github.com/scrapy/scrapy/wiki">tutorials</a> on the wiki very helpful and worked through several of them, (multiple times).  Get a basic crawl spider up and running and then pick up here.</p>
-
-<p>In this example, I hope to demonstrate the the following scrapy features:<br />
-  &ndash; Adding a spider parameter and using it from the command line<br />
-  &ndash; Getting current crawl depth and the referring url<br />
-  &ndash; Setting crawl depth limits</p>
-
-<p>The code samples below were from a scrapy project named <strong>farm1</strong></p>
-
-<p>The item:</p>
-
-<figure class='code'><figcaption><span>Item </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">scrapy.item</span> <span class="kn">import</span> <span class="n">Item</span><span class="p">,</span> <span class="n">Field</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">Farm1Item</span><span class="p">(</span><span class="n">Item</span><span class="p">):</span>
-</span><span class='line'>    <span class="n">session_id</span> <span class="o">=</span> <span class="n">Field</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">depth</span> <span class="o">=</span> <span class="n">Field</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">current_url</span> <span class="o">=</span> <span class="n">Field</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">referring_url</span> <span class="o">=</span> <span class="n">Field</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">title</span> <span class="o">=</span> <span class="n">Field</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><em>session_id</em>:  a unique session id for each scrapy run or harvest<br />
-<em>depth</em>:  the depth of the current page with respect to the start url<br />
-<em>current_url</em>: the url of the current page being processed<br />
-<em>referring_url</em>: the url of the site which was linked to the current page<br /></p>
-
-<p>The crawl spider:</p>
-
-<figure class='code'><figcaption><span>Spider </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">scrapy.contrib.spiders</span> <span class="kn">import</span> <span class="n">CrawlSpider</span><span class="p">,</span> <span class="n">Rule</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">scrapy.contrib.linkextractors.sgml</span> <span class="kn">import</span> <span class="n">SgmlLinkExtractor</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">scrapy.selector</span> <span class="kn">import</span> <span class="n">Selector</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">farm1.items</span> <span class="kn">import</span> <span class="n">Farm1Item</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">Harvester1</span><span class="p">(</span><span class="n">CrawlSpider</span><span class="p">):</span>
-</span><span class='line'>    <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Harvester1&#39;</span>
-</span><span class='line'>    <span class="n">session_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-</span><span class='line'>    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;http://www.example.com&quot;</span><span class="p">]</span>
-</span><span class='line'>    <span class="n">rules</span> <span class="o">=</span> <span class="p">(</span> <span class="n">Rule</span> <span class="p">(</span><span class="n">SgmlLinkExtractor</span><span class="p">(</span><span class="n">allow</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="p">),),</span>
-</span><span class='line'>                <span class="n">callback</span><span class="o">=</span><span class="s">&quot;parse_items&quot;</span><span class="p">,</span>  <span class="n">follow</span><span class="o">=</span> <span class="bp">True</span><span class="p">),</span>
-</span><span class='line'>    <span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span class='line'>        <span class="nb">super</span><span class="p">(</span><span class="n">Harvester1</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="n">session_id</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">parse_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
-</span><span class='line'>        <span class="n">sel</span> <span class="o">=</span> <span class="n">Selector</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span class='line'>        <span class="n">item</span> <span class="o">=</span> <span class="n">Farm1Item</span><span class="p">()</span>
-</span><span class='line'>        <span class="n">item</span><span class="p">[</span><span class="s">&quot;session_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span>
-</span><span class='line'>        <span class="n">item</span><span class="p">[</span><span class="s">&quot;depth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s">&quot;depth&quot;</span><span class="p">]</span>
-</span><span class='line'>        <span class="n">item</span><span class="p">[</span><span class="s">&quot;current_url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span>
-</span><span class='line'>        <span class="n">referring_url</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Referer&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">item</span><span class="p">[</span><span class="s">&quot;referring_url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">referring_url</span>
-</span><span class='line'>        <span class="n">item</span><span class="p">[</span><span class="s">&quot;title&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sel</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;//title/text()&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
-</span><span class='line'>        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-</span><span class='line'>        <span class="k">return</span> <span class="n">items</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The spider uses the <a href="http://doc.scrapy.org/en/latest/topics/link-extractors.html#sgmllinkextractor">SgmlLinkExtractor</a> and follows every link, (a later post will cover filtering which links to follow).</p>
-
-<h4>Adding a spider parameter and using it from the command line</h4>
-
-<p>Lines 14-16 in the spider shows the constructor which has a <em>session_id</em> parameter
-with a defaul assignment.  The session id is assigned to the spider and persisted with each item processed and will be used to identify items from different harvest sessions.  Defining the parameter in the constructor allows using it from the command line:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>x:~$ scrapy crawl Harvester7 -a session_id=337</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>Getting current crawl depth and the referring url</h4>
-
-<p>Line 23 is where the current depth of the crawl is retrieved.  The ‘depth’ key word is one of several
-<a href="http://doc.scrapy.org/en/latest/topics/request-response.html?highlight=meta#request-meta-special-keys" title="pre-defined keys">predefined keys</a> in the meta dictionary for the request and response objects.  The depth value will be used in the analysis phase.</p>
-
-<p>Line 25 shows how to retrieve the referring url.  The goal of this project was harvesting connections between domains, not just data from individual pages.  For each item processed, the connection between two links: <em>referring_url</em> &ndash;> <em>current_url</em> is stored.  Implied with each connection is the directionality of the link which will help build a directed graph for analysis.  This is enabled by default in the <a href="https://scrapy.readthedocs.org/en/latest/topics/settings.html#std:setting-SPIDER_MIDDLEWARES_BASE" title="default middleware settings">default middleware settings</a>, (and note that &lsquo;Referer&rsquo; is the correct usage).</p>
-
-<h4>Setting crawl depth limits</h4>
-
-<p>Rather than use ctrl-c to kill the crawling spider, you can set a depth limit at which the spider will not go beyond.  I found this helpful during testing.  DEPTH_LIMIT is a predefined setting that can be assigned in your settings file.  This was the only additional setting used in this example other than the defaults created with the project.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>DEPTH_LIMIT = 3</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The depth limit can also be set in the <a href="http://doc.scrapy.org/en/latest/topics/settings.html?highlight=depth#global-overrides">command line</a>, (as can all pre-defined settings):</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>x:~$ scrapy crawl Harvester1 –s DEPTH_LIMIT=2</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The command line assignment will take priority of the settings file.  Note that the depth limit will have little affect if you are running a <a href="http://doc.scrapy.org/en/latest/topics/broad-crawls.html?highlight=broad#broad-crawls">broad crawl</a>.  Ultimately, when this scraper is released into the wild, it will probably be set to run a broad crawl.  But it will still need to troll deep to really pull out much of a domain&rsquo;s public connections.  As to how this will be handled, (a mix of broad + deep crawls), I am not sure but it will be documented here once it is figured out.</p>
-
-<p>Next:  Filtering links to follow</p>
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://BgRva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2/" data-via="" data-counturl="http://BgRva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2/" >Tweet</a>
+  
+  
+  
 </div>
-  
-  
 
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/03/04/scrapy-after-tutorials-part-1/" title="Previous Post: scrapy after the tutorials part 1">&laquo; scrapy after the tutorials part 1</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
 </div>
+
 <aside class="sidebar">
   
     <section>
@@ -452,7 +312,7 @@ with a defaul assignment.  The session id is assigned to the spider and persiste
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/BgRva">@BgRva</a> on GitHub
@@ -484,6 +344,7 @@ with a defaul assignment.  The session id is assigned to the spider and persiste
 
   
 </aside>
+
 
     </div>
   </div>
