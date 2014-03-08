@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>BgRva</title>
+  <title>Scrapy After the Tutorials Part 1 - BgRva</title>
   <meta name="author" content="Michael Pastore">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://BgRva.github.io">
+  <link rel="canonical" href="http://BgRva.github.io/blog/2014/03/04/scrapy-after-tutorials-part-1">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="BgRva" type="application/atom+xml">
@@ -63,15 +63,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2014/03/04/scrapy-after-tutorials-part-1/">Scrapy After the Tutorials Part 1</a></h1>
+      <h1 class="entry-title">Scrapy After the Tutorials Part 1</h1>
     
     
       <p class="meta">
@@ -94,7 +91,7 @@
   </header>
 
 
-  <div class="entry-content"><p>I was given the task of building a scalable web scraper to harvest connections between domains of a specific industry in order to generate a network model of that industry’s online presence.  The scraper will need to run for a period of time, (say a week), and the resulting harvest would be the raw data from which the model would be generated.  This harvesting process will need to be repeatable to create ‘snapshots’ of the network for future longitudinal analysis.  The implementation will use <a href="http://www.yahoo.com" title="Scrapy">scrapy</a> with a <a href="http://www.mongodb.org" title="MongoDB">MongoDB</a> back end on a linux platform to be run (ultimately) in AWS.</p>
+<div class="entry-content"><p>I was given the task of building a scalable web scraper to harvest connections between domains of a specific industry in order to generate a network model of that industry’s online presence.  The scraper will need to run for a period of time, (say a week), and the resulting harvest would be the raw data from which the model would be generated.  This harvesting process will need to be repeatable to create ‘snapshots’ of the network for future longitudinal analysis.  The implementation will use <a href="http://www.yahoo.com" title="Scrapy">scrapy</a> with a <a href="http://www.mongodb.org" title="MongoDB">MongoDB</a> back end on a linux platform to be run (ultimately) in AWS.</p>
 
 <p>This post (and subsequent ones) will provide some code samples and documentation of issues faced during the process of getting the scraper operational.  The intent is to help bridge the gap between the initial scrapy tutorials and real-world code.  The examples assume you have scrapy installed and running, and have at least worked through the basic tutorials.  I did find many of the <a href="https://github.com/scrapy/scrapy/wiki">tutorials</a> on the wiki very helpful and worked through several of them, (multiple times).  Get a basic crawl spider up and running and then pick up here.</p>
 
@@ -232,18 +229,51 @@ with a defaul assignment.  The session id is assigned to the spider and persiste
 
 <p>Next:  Filtering links to follow</p>
 </div>
+
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Michael Pastore</span></span>
+
+      
+
+
+
+
+
+
+
+
   
 
 
-    </article>
+<time datetime="2014-03-04T17:27:39-08:00" pubdate data-updated="true">Mar 4<span>th</span>, 2014</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
   
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://BgRva.github.io/blog/2014/03/04/scrapy-after-tutorials-part-1/" data-via="" data-counturl="http://BgRva.github.io/blog/2014/03/04/scrapy-after-tutorials-part-1/" >Tweet</a>
+  
+  
+  
 </div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -260,7 +290,7 @@ with a defaul assignment.  The session id is assigned to the spider and persiste
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/BgRva">@BgRva</a> on GitHub
@@ -292,6 +322,7 @@ with a defaul assignment.  The session id is assigned to the spider and persiste
 
   
 </aside>
+
 
     </div>
   </div>
