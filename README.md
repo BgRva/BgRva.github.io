@@ -1,4 +1,0 @@
-BgRva.github.io
-===============
-
-blog
