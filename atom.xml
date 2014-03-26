@@ -4,7 +4,11 @@
   <title><![CDATA[BgRva]]></title>
   <link href="http://BgRva.github.io/atom.xml" rel="self"/>
   <link href="http://BgRva.github.io/"/>
+<<<<<<< HEAD
   <updated>2014-03-25T18:04:09-07:00</updated>
+=======
+  <updated>2014-03-08T14:04:04-08:00</updated>
+>>>>>>> 18f700d47a3be7b541d8b8507d9e4b9dacf1a893
   <id>http://BgRva.github.io/</id>
   <author>
     <name><![CDATA[Michael Pastore]]></name>
@@ -14,6 +18,7 @@
 
   
   <entry>
+<<<<<<< HEAD
     <title type="html"><![CDATA[Scraping to MongoDB]]></title>
     <link href="http://BgRva.github.io/blog/2014/03/23/scraping-to-mongodb/"/>
     <updated>2014-03-23T13:17:45-07:00</updated>
@@ -163,6 +168,8 @@
   </entry>
   
   <entry>
+=======
+>>>>>>> 18f700d47a3be7b541d8b8507d9e4b9dacf1a893
     <title type="html"><![CDATA[Scrapy After the Tutorials Part 2]]></title>
     <link href="http://BgRva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2/"/>
     <updated>2014-03-08T09:23:51-08:00</updated>
