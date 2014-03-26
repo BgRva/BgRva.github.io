@@ -2,7 +2,6 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://BgRva.github.io/blog/2014/03/04/scrapy-after-tutorials-part-1/</loc>
-<<<<<<< HEAD
         <lastmod>2014-03-23T13:58:54-07:00</lastmod>
     </url>
     <url>
@@ -12,13 +11,6 @@
     <url>
         <loc>http://BgRva.github.io/blog/2014/03/23/scraping-to-mongodb/</loc>
         <lastmod>2014-03-25T17:44:33-07:00</lastmod>
-=======
-        <lastmod>2014-03-08T03:33:32-08:00</lastmod>
-    </url>
-    <url>
-        <loc>http://BgRva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2/</loc>
-        <lastmod>2014-03-08T14:03:01-08:00</lastmod>
->>>>>>> 18f700d47a3be7b541d8b8507d9e4b9dacf1a893
     </url>
     <url>
         <loc>http://BgRva.github.io/robots.txt</loc>
@@ -26,18 +18,10 @@
     </url>
     <url>
         <loc>http://BgRva.github.io/blog/archives/</loc>
-<<<<<<< HEAD
         <lastmod>2014-03-25T17:44:33-07:00</lastmod>
     </url>
     <url>
         <loc>http://BgRva.github.io/</loc>
         <lastmod>2014-03-25T17:44:33-07:00</lastmod>
-=======
-        <lastmod>2014-03-08T14:03:01-08:00</lastmod>
-    </url>
-    <url>
-        <loc>http://BgRva.github.io/</loc>
-        <lastmod>2014-03-08T14:03:01-08:00</lastmod>
->>>>>>> 18f700d47a3be7b541d8b8507d9e4b9dacf1a893
     </url>
 </urlset>
