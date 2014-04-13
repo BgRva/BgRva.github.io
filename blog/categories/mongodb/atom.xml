@@ -4,11 +4,7 @@
   <title><![CDATA[Category: MongoDB | BgRva]]></title>
   <link href="http://BgRva.github.io/blog/categories/mongodb/atom.xml" rel="self"/>
   <link href="http://BgRva.github.io/"/>
-<<<<<<< HEAD
   <updated>2014-04-13T13:37:34-04:00</updated>
-=======
-  <updated>2014-03-25T18:04:09-07:00</updated>
->>>>>>> 974e4caa93b502372a65cddfabef7abf552613d8
   <id>http://BgRva.github.io/</id>
   <author>
     <name><![CDATA[Michael Pastore]]></name>
@@ -20,11 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Scraping to MongoDB]]></title>
     <link href="http://BgRva.github.io/blog/2014/03/23/scraping-to-mongodb/"/>
-<<<<<<< HEAD
     <updated>2014-03-23T16:17:45-04:00</updated>
-=======
-    <updated>2014-03-23T13:17:45-07:00</updated>
->>>>>>> 974e4caa93b502372a65cddfabef7abf552613d8
     <id>http://BgRva.github.io/blog/2014/03/23/scraping-to-mongodb</id>
     <content type="html"><![CDATA[<p>Now that we can crawl some sites (based on the previous posts), we need to persist the data somewhere where it can be retrieved and processed for analysis.  Recall that the goal of the scraper was to harvest connections between domains in order to generate a model of a specific industry’s on-line presence.  In Scrapy, <a href="http://doc.scrapy.org/en/latest/topics/item-pipeline.html">Item Pipelines</a> are the prescribed mechanism by which scraped items can be persisted to a data store.  In this post, we will be using a custom pipeline extension for <a href="http://www.mongodb.org/">MongoDB</a> which we will further customize to check for duplicates.  The code examples in this post build upon those in the previous examples.  It is also assumed that you have some familiarity with MongoDB and have a working (basic) crawl spider.  It does not cover installing Scrapy, MongoDB, or any dependencies, (there is plenty of good documentation on these subjects).  Before continuing, you will need to install the following (in addition to having Scrapy working):</p>
 
