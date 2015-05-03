@@ -5,11 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-<<<<<<< HEAD
   <title>Scrapy to MongoDB - BgRva</title>
-=======
-  <title>Scraping to MongoDB - BgRva</title>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
   <meta name="author" content="Michael Pastore">
 
   
@@ -22,29 +18,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-<<<<<<< HEAD
   <link rel="canonical" href="http://bgrva.github.io/blog/2014/03/23/scraping-to-mongodb/">
-=======
-  <link rel="canonical" href="http://BgRva.github.io/blog/2014/03/23/scraping-to-mongodb">
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="BgRva" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<<<<<<< HEAD
   <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-=======
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
   
 
@@ -54,11 +38,7 @@
   <header role="banner"><hgroup>
   <h1><a href="/">BgRva</a></h1>
   
-<<<<<<< HEAD
     <h2>software, data, designs, &#8230;</h2>
-=======
-    <h2>software, data analysis, ...</h2>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
   
 </hgroup>
 
@@ -68,15 +48,9 @@
   
 </ul>
   
-<<<<<<< HEAD
 <form action="https://www.google.com/search" method="get">
   <fieldset role="search">
     <input type="hidden" name="sitesearch" value="bgrva.github.io">
-=======
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:BgRva.github.io" />
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -94,11 +68,7 @@
   
   <header>
     
-<<<<<<< HEAD
       <h1 class="entry-title">Scrapy to MongoDB</h1>
-=======
-      <h1 class="entry-title">Scraping to MongoDB</h1>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
     
     
       <p class="meta">
@@ -107,25 +77,13 @@
 
 
 
-<<<<<<< HEAD
 <time class='entry-date' datetime='2014-03-23T20:11:01-04:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2014</span></span> <span class='time'>8:11 pm</span></time>
-=======
-
-
-
-
-  
-
-
-<time datetime="2014-03-23T16:17:45-04:00" pubdate data-updated="true">Mar 23<span>rd</span>, 2014</time>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
         
       </p>
     
   </header>
 
 
-<<<<<<< HEAD
 <div class="entry-content"><p>Now that we can crawl some sites (based on the previous posts), we need to persist the data somewhere where it can be retrieved and processed for analysis. Recall that the goal of the scraper was to harvest connections between domains in order to generate a model of a specific industry’s on-line presence. In Scrapy, <a href="http://doc.scrapy.org/en/latest/topics/item-pipeline.html">Item Pipelines</a> are the prescribed mechanism by which scraped items can be persisted to a data store. In this post, we will be using a custom pipeline extension for <a href="http://www.mongodb.org/">MongoDB</a> which we will further customize to check for duplicates. The code examples in this post build upon those in the previous examples. It is also assumed that you have some familiarity with MongoDB and have a working (basic) crawl spider. It does not cover installing Scrapy, MongoDB, or any dependencies, (there is plenty of good documentation on these subjects). Before continuing, you will need to install the following (in addition to having Scrapy working):</p>
 
 <p>– <a href="http://www.mongodb.org/">MongoDB</a><br/>
@@ -140,22 +98,6 @@
 <p>The <em>session_id</em> is used to group items from different harvests. We want to persist a single connection between two given urls for each harvest session. The <em>current_url</em> and <em>referring_url</em> will be used to represent the connection between two domains and will be used to generate a directed graph for the model, (a connection between two valid business backed domains can be used to infer a relationship which in turn can be used in social network analysis, more on this later …).</p>
 
 <p>The new class will be called <em>CustomMongoDBPipeline</em> and should be placed within the <em>pipelines.py</em> file in the scrapy project folder. You can keep the default pipeline initialized with the project in the same file and switch back by changing the settings file.</p>
-=======
-<div class="entry-content"><p>Now that we can crawl some sites (based on the previous posts), we need to persist the data somewhere where it can be retrieved and processed for analysis.  Recall that the goal of the scraper was to harvest connections between domains in order to generate a model of a specific industry’s on-line presence.  In Scrapy, <a href="http://doc.scrapy.org/en/latest/topics/item-pipeline.html">Item Pipelines</a> are the prescribed mechanism by which scraped items can be persisted to a data store.  In this post, we will be using a custom pipeline extension for <a href="http://www.mongodb.org/">MongoDB</a> which we will further customize to check for duplicates.  The code examples in this post build upon those in the previous examples.  It is also assumed that you have some familiarity with MongoDB and have a working (basic) crawl spider.  It does not cover installing Scrapy, MongoDB, or any dependencies, (there is plenty of good documentation on these subjects).  Before continuing, you will need to install the following (in addition to having Scrapy working):</p>
-
-<p> &ndash;<a href="http://www.mongodb.org/">MongoDB</a><br />
- &ndash;<a href="http://github.com/sebdah/scrapy-mongodb">Scrapy-MongoDB</a>, an item pipeline extension written by Sebastian Dahlgren</p>
-
-<p>Once installed, the first step will be to get Scrapy-MongoDB working and saving to a collection.  Once you&rsquo;ve got MongoDB installed, create a database named <em>scrapy</em> and within it, a collection named <em>items</em>.  You can use the crawl spider from the previous posts and update the settings.py file to use Scrapy-MongoDB.  A quick note about MongoDB ids:  mongo will automatically add a unique id object with each item if and id field is not specified.  We will use default id and benefit from it because the default MongoDB id object contains an embedded <a href="http://docs.mongodb.org/manual/reference/method/ObjectId.getTimestamp/#ObjectId.getTimestamp">date-time stamp</a>.  Once you get Scrapy-MongoDB working and you are saving to a collection, we need to extend the <a href="https://github.com/sebdah/scrapy-mongodb/blob/master/scrapy_mongodb.py">MongoDBPipeline</a> class to include behavior to check for duplicates.  A duplicate of the example item is one in which the following fields match:</p>
-
-<p> -Session_id<br/>
- -Current_url<br/>
- -Referring_url<br/></p>
-
-<p>The <em>session_id</em> is used to group items from different harvests.  We want to persist a single connection between two given urls for each harvest session.  The <em>current_url</em> and <em>referring_url</em> will be used to represent the connection between two domains and will be used to generate a directed graph for the model, (a connection between two valid business backed domains can be used to infer a relationship which in turn can be used in social network analysis, more on this later &hellip;).</p>
-
-<p>The new class will be called <em>CustomMongoDBPipeline</em> and should be placed within the <em>pipelines.py</em> file in the scrapy project folder.  You can keep the default pipeline initialized with the project in the same file and switch back by changing the settings file.</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 <figure class='code'><figcaption><span>pipelines.py </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -233,11 +175,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<<<<<<< HEAD
 <p>Lines 9-22 are a duplication of the parent class MongoDBPipeline.process_item() method to maintain compatability with the Scrapy-MongoDB configuration options. Line 25 is where we retrieve an entry that matches the specified fields. If an entry is found, then the current item is dropped and we return to crawling. The settings are:</p>
-=======
-<p>Lines 9-22 are a duplication of the parent class MongoDBPipeline.process_item() method to maintain compatability with the Scrapy-MongoDB configuration options.  Line 25 is where we retrieve an entry that matches the specified fields.  If an entry is found, then the current item is dropped and we return to crawling.  The settings are:</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 <figure class='code'><figcaption><span>settings.py </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -282,18 +220,10 @@
 <p>Recall you can set the session_id from the command line</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<<<<<<< HEAD
 </pre></td><td class='code'><pre><code class=''><span class='line'>scrapy crawl farm2 -a session_id=337</span></code></pre></td></tr></table></div></figure>
 
 
 
-=======
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">scrapy</span> <span class="n">crawl</span> <span class="n">farm2</span> <span class="o">-</span><span class="n">a</span> <span class="n">session_id</span><span class="o">=</span><span class="mi">337</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Next: Stopping Criteria</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 </div>
 
 
@@ -309,27 +239,12 @@
 
 
 
-<<<<<<< HEAD
 <time class='entry-date' datetime='2014-03-23T20:11:01-04:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2014</span></span> <span class='time'>8:11 pm</span></time>
-=======
-
-
-
-
-  
-
-
-<time datetime="2014-03-23T16:17:45-04:00" pubdate data-updated="true">Mar 23<span>rd</span>, 2014</time>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
       
 
 <span class="categories">
   
-<<<<<<< HEAD
     <a class='category' href='/blog/categories/mongodb/'>mongodb</a>, <a class='category' href='/blog/categories/python/'>python</a>, <a class='category' href='/blog/categories/scrapy/'>scrapy</a>
-=======
-    <a class='category' href='/blog/categories/mongodb/'>MongoDB</a>, <a class='category' href='/blog/categories/python/'>Python</a>, <a class='category' href='/blog/categories/scrapy/'>Scrapy</a>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
   
 </span>
 
@@ -338,48 +253,32 @@
     
       <div class="sharing">
   
-<<<<<<< HEAD
   <a href="//twitter.com/share" class="twitter-share-button" data-url="http://bgrva.github.io/blog/2014/03/23/scraping-to-mongodb/" data-via="BgRva" data-counturl="http://bgrva.github.io/blog/2014/03/23/scraping-to-mongodb/" >Tweet</a>
   
   
   
     <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
-=======
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://BgRva.github.io/blog/2014/03/23/scraping-to-mongodb/" data-via="" data-counturl="http://BgRva.github.io/blog/2014/03/23/scraping-to-mongodb/" >Tweet</a>
-  
-  
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
   
 </div>
 
     
     <p class="meta">
       
-<<<<<<< HEAD
         <a class="basic-alignment left" href="/blog/2014/03/08/scrapy-after-tutorials-part-2/" title="Previous Post: Scrapy After the Tutorials Part 2">&laquo; Scrapy After the Tutorials Part 2</a>
       
       
         <a class="basic-alignment right" href="/blog/2014/04/13/deploy-crawler-to-ec2-with-scrapyd/" title="Next Post: Deploy Crawler to EC2 With Scrapyd">Deploy Crawler to EC2 With Scrapyd &raquo;</a>
-=======
-        <a class="basic-alignment left" href="/blog/2014/03/08/scrapy-after-tutorials-part-2/" title="Previous Post: Scrapy after the Tutorials part 2">&laquo; Scrapy after the Tutorials part 2</a>
-      
-      
-        <a class="basic-alignment right" href="/blog/2014/04/13/deploy-crawler-to-ec2-with-scrapyd/" title="Next Post: Deploy crawler to EC2 with scrapyd">Deploy crawler to EC2 with scrapyd &raquo;</a>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
       
     </p>
   </footer>
 </article>
 
-<<<<<<< HEAD
   <section>
     <h1>Comments</h1>
     <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
   </section>
 
-=======
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 </div>
 
 <aside class="sidebar">
@@ -389,7 +288,6 @@
   <ul id="recent_posts">
     
       <li class="post">
-<<<<<<< HEAD
         <a href="/blog/2015/02/19/extract-subnet-by-steps/">Snowball Extraction of a Sub-Network</a>
       </li>
     
@@ -407,21 +305,6 @@
     
       <li class="post">
         <a href="/blog/2014/03/08/scrapy-after-tutorials-part-2/">Scrapy After the Tutorials Part 2</a>
-=======
-        <a href="/blog/2014/04/13/deploy-crawler-to-ec2-with-scrapyd/">Deploy Crawler to EC2 With Scrapyd</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/03/23/scraping-to-mongodb/">Scraping to MongoDB</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/03/08/scrapy-after-tutorials-part-2/">Scrapy After the Tutorials Part 2</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/03/04/scrapy-after-tutorials-part-1/">Scrapy After the Tutorials Part 1</a>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
       </li>
     
   </ul>
@@ -430,11 +313,7 @@
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-<<<<<<< HEAD
     <li class="loading">Status updating&#8230;</li>
-=======
-    <li class="loading">Status updating...</li>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
   </ul>
   
   <a href="https://github.com/BgRva">@BgRva</a> on GitHub
@@ -452,11 +331,7 @@
         github.showRepos({
             user: 'BgRva',
             count: 0,
-<<<<<<< HEAD
             skip_forks: true,
-=======
-            skip_forks: false,
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
             target: '#gh_repos'
         });
     });
@@ -475,18 +350,13 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-<<<<<<< HEAD
   Copyright &copy; 2015 - Michael Pastore -
-=======
-  Copyright &copy; 2014 - Michael Pastore -
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
 </footer>
   
 
-<<<<<<< HEAD
 <script type="text/javascript">
       var disqus_shortname = 'BgRva';
       
@@ -513,9 +383,6 @@
   js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
-=======
-
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 
 

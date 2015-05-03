@@ -1,8 +1,4 @@
 User-agent: *
 Disallow: 
 
-<<<<<<< HEAD
 Sitemap: http://bgrva.github.io/sitemap.xml 
-=======
-Sitemap: http://BgRva.github.io/sitemap.xml 
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313

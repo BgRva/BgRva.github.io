@@ -2,17 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[BgRva]]></title>
-<<<<<<< HEAD
   <link href="http://bgrva.github.io/atom.xml" rel="self"/>
   <link href="http://bgrva.github.io/"/>
-  <updated>2015-05-03T12:13:58-04:00</updated>
+  <updated>2015-05-03T12:25:39-04:00</updated>
   <id>http://bgrva.github.io/</id>
-=======
-  <link href="http://BgRva.github.io/atom.xml" rel="self"/>
-  <link href="http://BgRva.github.io/"/>
-  <updated>2014-04-13T13:37:34-04:00</updated>
-  <id>http://BgRva.github.io/</id>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
   <author>
     <name><![CDATA[Michael Pastore]]></name>
     
@@ -21,7 +14,6 @@
 
   
   <entry>
-<<<<<<< HEAD
     <title type="html"><![CDATA[Snowball Extraction of a Sub-Network]]></title>
     <link href="http://bgrva.github.io/blog/2015/02/19/extract-subnet-by-steps/"/>
     <updated>2015-02-19T08:32:53-05:00</updated>
@@ -432,19 +424,6 @@
 <p>If you don’t have an AWS then get one set up first and spend some time reading about <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/IAMBestPractices.html">IAM best practices</a>. In particular, don’t use your main account credentials for development. Create a <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/IAMBestPractices.html#create-iam-users">new user</a> in your AWS account and assign that user admin rights and do all development with that user. This separates you development credentials from your master account credentials (which have your credit card).</p>
 
 <h3>Setting up scrapy on a EC2 Ubuntu instance</h3>
-=======
-    <title type="html"><![CDATA[Deploy Crawler to EC2 With Scrapyd]]></title>
-    <link href="http://BgRva.github.io/blog/2014/04/13/deploy-crawler-to-ec2-with-scrapyd/"/>
-    <updated>2014-04-13T07:37:37-04:00</updated>
-    <id>http://BgRva.github.io/blog/2014/04/13/deploy-crawler-to-ec2-with-scrapyd</id>
-    <content type="html"><![CDATA[<p>This post will walk through using <a href="http://doc.scrapy.org/en/latest/topics/scrapyd.html#scrapyd">scrapyd</a> to deploy and manage a <a href="http://www.scrapy.org">scrapy</a> spider from a local linux instance to a remote EC2 linux instance.  The steps below were run on a local Ubuntu 12.04 instance aneone of the free AWS linux Ubuntu 12.04 tiers.  This is another step in the development of the scraping project described in the first post for which the indented goal is to have multiple instances of scrapy spiders crawling for extended periods of time and saving the items to a common database for further processing.</p>
-
-<p>This post assumes you have scrapy and scrapyd installed on a local (linux) system, a working scrapy crawler, an AWS account, and have some knowledge of basic web security practices.  Note: If you have not yet installed scrapy on your local system, when installing pip for scrapy, install the ‘setup tools’ and not the ‘distro tools’, as the setup tools will be needed by scrapyd for &lsquo;egg-i-fying&rsquo; crawlers for deployment.</p>
-
-<p>If you don’t have an AWS then get one set up first and spend some time reading about <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/IAMBestPractices.html">IAM best practices</a>.  In particular, don’t use your main account credentials for development.  Create a <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/IAMBestPractices.html#create-iam-users">new user</a> in your AWS account and assign that user admin rights and do all development with that user.  This separates you development credentials from your master account credentials (which have your credit card).</p>
-
-<h2>Setting up scrapy on a EC2 Ubuntu instance</h2>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 <p>These are the broad steps I took to get an Ubuntu Server 12.04 LTS (free tier) instance up and running with scrapy and scrapyd installed. They do not cover all the details. If this is your first time with AWS, there are plenty of docs and quality videos available – invest some time in them.</p>
 
@@ -454,19 +433,11 @@
 
 <p>3) Create a Security Group with the following inbound and outbound rules:</p>
 
-<<<<<<< HEAD
 <p>Inbound (for inbound ssh and scrapyd communication):
 <img src="http://bgrva.github.io/images/ec2-inbound-rules.jpg" title="inbound rules" alt="image of ec2 inbound rules"></p>
 
 <p>Outbound (for outbound scrapyd and crawler http gets):
 <img src="http://bgrva.github.io/images/ec2-outbound-rules.jpg" title="outbound rules" alt="image of ec2 outbound rules"></p>
-=======
-<p>Inbound (for inbound ssh and scrapyd communication):<br/>
-<img src="http://BgRva.github.io/images/ec2-inbound-rules.jpg" title="[Inbound rules]" ></p>
-
-<p>Outbound (for outbound scrapyd and crawler http gets):<br/>
-<img src="http://BgRva.github.io/images/ec2-outbound-rules.jpg" title="[Outbound rules]" ></p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 <p>4) Create a key value pair for the ‘dev’ user and download it so you have access to it on your local system</p>
 
@@ -476,25 +447,15 @@
 
 <p>8) Install scrapy and scrapyd on the EC2 instance</p>
 
-<<<<<<< HEAD
 <h3>Prepare the crawler for deployment</h3>
 
 <p>Scrapyd deployment <a href="http://scrapyd.readthedocs.org/en/latest/deploy.html#show-and-define-targets">targets</a> are specified in a crawler’s <em>scrapy.cfg</em> file. The scrapyd commands to deploy a crawler need to be run in the root directory of your crawler project (or use fully qualified paths).</p>
-=======
-<h2>Prepare the crawler for deployment</h2>
-
-<p>Scrapyd deployment <a href="http://scrapyd.readthedocs.org/en/latest/deploy.html#show-and-define-targets">targets</a> are specified in a crawler’s <em>scrapy.cfg</em> file.  The scrapyd commands to deploy a crawler need to be run in the root directory of your crawler project (or use fully qualified paths).</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 <p>1) On your local system, go to the root folder of your crawler project</p>
 
 <p>2) Edit <em>scrapy.cfg</em> by replacing any <em>deploy</em> sections so that the file looks like the following:</p>
 
-<<<<<<< HEAD
 <figure class='code'><figcaption><span>scrapy.cfg  </span></figcaption>
-=======
-<figure class='code'><figcaption><span>scrapy.cfg </span></figcaption>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -532,12 +493,7 @@
 
 <p>3) Verify the targets with the command:</p>
 
-<<<<<<< HEAD
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-=======
-<figure class='code'><figcaption><span>scrapyd command </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 </pre></td><td class='code'><pre><code class=''><span class='line'>scrapyd-deploy -l</span></code></pre></td></tr></table></div></figure>
 
 
@@ -549,7 +505,6 @@
 </span><span class='line'>aws-target             http://my-ec2.amazonaws.com:6800/</span></code></pre></td></tr></table></div></figure>
 
 
-<<<<<<< HEAD
 <h3>Deploy the crawler to EC2</h3>
 
 <p>Make sure scrapyd is running on the target instance. For our EC2 instance we can check this by using one of the scrapy web service commands or in a browser navigate to the scrapyd web page (format: my-ec2.amazonaws.com:6800). Note: after I had scrapyd installed on EC2, if I stopped and restarted the instance, scrapyd would be run on startup. When I tried to run scrapyd I got an error “port 6800 in use”. If you get a similar error check if scrapyd is already running.</p>
@@ -557,16 +512,6 @@
 <p>1) To deploy the spider to the EC2 target use the scrapyd command:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-=======
-<h2>Deploy the crawler to EC2</h2>
-
-<p>Make sure scrapyd is running on the target instance.  For our EC2 instance we can check this by using one of the scrapy web service commands or in a browser navigate to the scrapyd web page (format: my-ec2.amazonaws.com:6800).  Note: after I had scrapyd installed on EC2, if I stopped and restarted the instance, scrapyd would be run on startup.  When I tried to run scrapyd I got an error “port 6800 in use”.  If you get a similar error check if scrapyd is already running.</p>
-
-<p>1) To deploy the spider to the EC2 target use the scrapyd command:</p>
-
-<figure class='code'><figcaption><span>scrapyd command </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 </pre></td><td class='code'><pre><code class=''><span class='line'>scrapyd-deploy aws-target -p projectX</span></code></pre></td></tr></table></div></figure>
 
 
@@ -595,7 +540,6 @@
 </pre></td><td class='code'><pre><code class=''><span class='line'>{"status": ok, "projects": ["projectX"]}</span></code></pre></td></tr></table></div></figure>
 
 
-<<<<<<< HEAD
 <p>or you can refresh the scrapyd webpage on your remote instance and Available projects</p>
 
 <h3>Schedule and instance of the crawler</h3>
@@ -603,15 +547,6 @@
 <p>1) Use the scrapyd web service to schedule to the spider. Note: for the spiders I needed to run, each had multiple constructor parameters. To schedule a spider with constructor parameters, each parameter must be preceded by -d and they must be in the order as they appear in the spider constructor. For this example, the constructor parameters are <em>session_id</em>, <em>seed_id</em>, and <em>seed_url</em>. The particular spider to be used is <em>spider2b</em>:</p>
 
 <figure class='code'><figcaption><span>scrapyd command </span></figcaption>
-=======
-<p>or you can refresh the scrapyd webpage on your remote instance and  <em>Available projects</em></p>
-
-<h2>Schedule and instance of the crawler</h2>
-
-<p>1) Use the scrapyd web service to schedule to the spider.  Note: for the spiders I needed to run, each had multiple constructor parameters.  To schedule a spider with constructor parameters, each parameter must be preceded by <em>-d</em> and they must be in the order as they appear in the spider constructor.  For this example, the constructor parameters are <em>session_id</em>, <em>seed_id</em>, and <em>seed_url</em>.  The particular spider to be used is<em>spider2b</em>:</p>
-
-<figure class='code'><figcaption><span>scrapyd command  </span></figcaption>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>curl http://my-ec2.amazonaws.com:6800/schedule.json -d project=projectX -d spider=spider2b -d session_id=33 -d seed_id=54 -d seed_url=http://www.blah.com/</span></code></pre></td></tr></table></div></figure>
 
@@ -624,11 +559,7 @@
 
 <p>2) Verify the job:</p>
 
-<<<<<<< HEAD
 <figure class='code'><figcaption><span>scrapyd command </span></figcaption>
-=======
-<figure class='code'><figcaption><span>scrapyd command  </span></figcaption>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>curl http://my-ec2.amazonaws.com:6800/listjobs.json?project=projectX</span></code></pre></td></tr></table></div></figure>
 
@@ -639,19 +570,11 @@
 </pre></td><td class='code'><pre><code class=''><span class='line'>{"status": "ok", "running": [{"id": "c77c633ac28011e3ac0a0a32be087ede", "spider": "spider2b"}], "finished": [], "pending": []}</span></code></pre></td></tr></table></div></figure>
 
 
-<<<<<<< HEAD
 <p>or you can refresh the scrapyd webpage on your remote instance and check Jobs</p>
 
 <p>3) To stop a job, use the following</p>
 
 <figure class='code'><figcaption><span>scrapyd command </span></figcaption>
-=======
-<p>or you can refresh the scrapyd webpage on your remote instance and check <em>Jobs</em></p>
-
-<p>3) To stop a job, use the following</p>
-
-<figure class='code'><figcaption><span>scrapyd command  </span></figcaption>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>curl http://my-ec2.amazonaws.com:6800/cancel.json -d project=simple -d job=c77c633ac28011e3ac0a0a32be087ede</span></code></pre></td></tr></table></div></figure>
 
@@ -662,16 +585,11 @@
 </pre></td><td class='code'><pre><code class=''><span class='line'>{"status": "ok", "prevstate": "running"}</span></code></pre></td></tr></table></div></figure>
 
 
-<<<<<<< HEAD
 <p>Note that the <em>schedule</em> and <em>cancel</em> commands of the scrapyd webservice are not immediate, so give them a bit to take affect. When getting started, the scrapyd web page on the EC2 instance is the easiest way of viewing the logs and output items.</p>
-=======
-<p>Note that the <em>schedule</em> and <em>cancel</em> commands of the scrapyd webservice are not immediate, so give them a bit to take affect.  When getting started, the scrapyd web page on the EC2 instance is the easiest way of viewing the logs and output items.</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 ]]></content>
   </entry>
   
   <entry>
-<<<<<<< HEAD
     <title type="html"><![CDATA[Scrapy to MongoDB]]></title>
     <link href="http://bgrva.github.io/blog/2014/03/23/scraping-to-mongodb/"/>
     <updated>2014-03-23T20:11:01-04:00</updated>
@@ -690,26 +608,6 @@
 <p>The <em>session_id</em> is used to group items from different harvests. We want to persist a single connection between two given urls for each harvest session. The <em>current_url</em> and <em>referring_url</em> will be used to represent the connection between two domains and will be used to generate a directed graph for the model, (a connection between two valid business backed domains can be used to infer a relationship which in turn can be used in social network analysis, more on this later …).</p>
 
 <p>The new class will be called <em>CustomMongoDBPipeline</em> and should be placed within the <em>pipelines.py</em> file in the scrapy project folder. You can keep the default pipeline initialized with the project in the same file and switch back by changing the settings file.</p>
-=======
-    <title type="html"><![CDATA[Scraping to MongoDB]]></title>
-    <link href="http://BgRva.github.io/blog/2014/03/23/scraping-to-mongodb/"/>
-    <updated>2014-03-23T16:17:45-04:00</updated>
-    <id>http://BgRva.github.io/blog/2014/03/23/scraping-to-mongodb</id>
-    <content type="html"><![CDATA[<p>Now that we can crawl some sites (based on the previous posts), we need to persist the data somewhere where it can be retrieved and processed for analysis.  Recall that the goal of the scraper was to harvest connections between domains in order to generate a model of a specific industry’s on-line presence.  In Scrapy, <a href="http://doc.scrapy.org/en/latest/topics/item-pipeline.html">Item Pipelines</a> are the prescribed mechanism by which scraped items can be persisted to a data store.  In this post, we will be using a custom pipeline extension for <a href="http://www.mongodb.org/">MongoDB</a> which we will further customize to check for duplicates.  The code examples in this post build upon those in the previous examples.  It is also assumed that you have some familiarity with MongoDB and have a working (basic) crawl spider.  It does not cover installing Scrapy, MongoDB, or any dependencies, (there is plenty of good documentation on these subjects).  Before continuing, you will need to install the following (in addition to having Scrapy working):</p>
-
-<p> &ndash;<a href="http://www.mongodb.org/">MongoDB</a><br />
- &ndash;<a href="http://github.com/sebdah/scrapy-mongodb">Scrapy-MongoDB</a>, an item pipeline extension written by Sebastian Dahlgren</p>
-
-<p>Once installed, the first step will be to get Scrapy-MongoDB working and saving to a collection.  Once you&rsquo;ve got MongoDB installed, create a database named <em>scrapy</em> and within it, a collection named <em>items</em>.  You can use the crawl spider from the previous posts and update the settings.py file to use Scrapy-MongoDB.  A quick note about MongoDB ids:  mongo will automatically add a unique id object with each item if and id field is not specified.  We will use default id and benefit from it because the default MongoDB id object contains an embedded <a href="http://docs.mongodb.org/manual/reference/method/ObjectId.getTimestamp/#ObjectId.getTimestamp">date-time stamp</a>.  Once you get Scrapy-MongoDB working and you are saving to a collection, we need to extend the <a href="https://github.com/sebdah/scrapy-mongodb/blob/master/scrapy_mongodb.py">MongoDBPipeline</a> class to include behavior to check for duplicates.  A duplicate of the example item is one in which the following fields match:</p>
-
-<p> -Session_id<br/>
- -Current_url<br/>
- -Referring_url<br/></p>
-
-<p>The <em>session_id</em> is used to group items from different harvests.  We want to persist a single connection between two given urls for each harvest session.  The <em>current_url</em> and <em>referring_url</em> will be used to represent the connection between two domains and will be used to generate a directed graph for the model, (a connection between two valid business backed domains can be used to infer a relationship which in turn can be used in social network analysis, more on this later &hellip;).</p>
-
-<p>The new class will be called <em>CustomMongoDBPipeline</em> and should be placed within the <em>pipelines.py</em> file in the scrapy project folder.  You can keep the default pipeline initialized with the project in the same file and switch back by changing the settings file.</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 <figure class='code'><figcaption><span>pipelines.py </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -787,11 +685,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<<<<<<< HEAD
 <p>Lines 9-22 are a duplication of the parent class MongoDBPipeline.process_item() method to maintain compatability with the Scrapy-MongoDB configuration options. Line 25 is where we retrieve an entry that matches the specified fields. If an entry is found, then the current item is dropped and we return to crawling. The settings are:</p>
-=======
-<p>Lines 9-22 are a duplication of the parent class MongoDBPipeline.process_item() method to maintain compatability with the Scrapy-MongoDB configuration options.  Line 25 is where we retrieve an entry that matches the specified fields.  If an entry is found, then the current item is dropped and we return to crawling.  The settings are:</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 <figure class='code'><figcaption><span>settings.py </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -836,24 +730,15 @@
 <p>Recall you can set the session_id from the command line</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<<<<<<< HEAD
 </pre></td><td class='code'><pre><code class=''><span class='line'>scrapy crawl farm2 -a session_id=337</span></code></pre></td></tr></table></div></figure>
 
 
 
-=======
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">scrapy</span> <span class="n">crawl</span> <span class="n">farm2</span> <span class="o">-</span><span class="n">a</span> <span class="n">session_id</span><span class="o">=</span><span class="mi">337</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Next: Stopping Criteria</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Scrapy After the Tutorials Part 2]]></title>
-<<<<<<< HEAD
     <link href="http://bgrva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2/"/>
     <updated>2014-03-08T10:22:33-05:00</updated>
     <id>http://bgrva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2</id>
@@ -869,24 +754,6 @@
 – any relative urls<br/></p>
 
 <p>To remove urls to the same domain, we will implement a filter_links() for the crawling Rule. To remove relative urls, we will add a regex to the link extractor to limit all urls returned to fully qualified urls, (e.g. start with <a href="http:">http:</a> or <a href="https:">https:</a>). The Item has not changed from the last post.</p>
-=======
-    <link href="http://BgRva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2/"/>
-    <updated>2014-03-08T12:23:51-05:00</updated>
-    <id>http://BgRva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2</id>
-    <content type="html"><![CDATA[<p>As described in the previous post, the scraper will be crawling over extended periods of time.  Filtering out links which do not need to be crawled is one way of improving performance: less links to crawl = less items to process.  In this example, I hope to demonstrate how to filter the links to be crawled.  So how does the scraper determine which links to follow and how can we modify this behavior?  Using step #7 in the <a href="http://doc.scrapy.org/en/latest/topics/architecture.html#data-flow">Data Flow</a> as reference:</p>
-
-<blockquote><p>The Spider processes the Response and returns scraped Items
-and new Requests (to follow) to the Engine.</p></blockquote>
-
-<p>So when a response is sent to the spider for processing, the spider will first extract all links in the  response and send them to the engine to be scheduled for crawling.  The spider <a href="http://doc.scrapy.org/en/latest/topics/spiders.html?highlight=rule#crawling-rules">rules</a> control which links will be passed to the engine for crawling.  Each rule uses a <a href="">link extractor</a> with which you can specify the links to follow or drop using the available parameters.  Many of the basic <a href="http://doc.scrapy.org/en/latest/topics/spiders.html?highlight=rule#crawlspider-example">examples</a> of crawl spiders demonstrate the &lsquo;allow&rsquo; and &lsquo;deny&rsquo; parameters for the rules.  But for this example, we need a bit more functionality.</p>
-
-<p>By default, for each response processed by the spider, the set of urls send to the engine for crawling will include every href tag in the response.  To limit the amount of links that will be followed, we can remove the following types of links:</p>
-
-<p> -any urls to the same domain as the response.url<br />
- -any relative urls</p>
-
-<p>To remove urls to the same domain, we will implement a <em>filter_links()</em> for the crawling Rule.  To remove relative urls, we will add a regex to the link extractor to limit all urls returned to fully qualified urls, (e.g. start with <a href="http:">http:</a> or <a href="https:">https:</a>).  The Item has not changed from the last post.</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 <figure class='code'><figcaption><span>Spider </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -1010,7 +877,6 @@ and new Requests (to follow) to the Engine.</p></blockquote>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<<<<<<< HEAD
 <p>Note: you can add this spider to the previous project by dropping it in the same folder as the other spider. As long as the file name and spider name are different, it will run with the same item and settings.</p>
 
 <p>The response_url class variable (line 10) will maintain the current response.url and will be needed for filtering urls.</p>
@@ -1026,31 +892,11 @@ and new Requests (to follow) to the Engine.</p></blockquote>
 <p>The allow parameter for the link extractor (line 15) is assigned the regular expression “((mailto:|(news|(ht|f)tp(s?))://){1}\S+)” which precludes any relative urls by only allowing urls that start with a <a href="http://en.wikipedia.org/wiki/URI_scheme">URI Scheme</a> (e.g. ftp, http, etc.).</p>
 
 <p>When a response is sent to a spider for processing, the filter_links() method is called before the process_item() method. In this example, if the response_url variable is not set, it will fail. This is the reason we needed to use the parse_start_url() method, which is called for each defined start_url and allows us to set the response_url variable before any links are processed by filter_links(). This only allows fully qualified links to external urls to be sent to the engine for scheduled crawling.</p>
-=======
-<p>Note:  you can add this spider to the previous project by dropping it in the same folder as the other spider.  As long as the file name and spider name are different, it will run with the same item and settings.</p>
-
-<p>The <em>response_url</em> class variable (line 10) will maintain the current response.url and will be needed for filtering urls.</p>
-
-<p>The <a href="http://doc.scrapy.org/en/latest/topics/spiders.html?highlight=rule#scrapy.contrib.spiders.CrawlSpider.parse_start_url">parse_start_url()</a> method (line 25) overrides the base definition and is called only for the defined <em>start_urls</em> and processes each start url as an item.  Most importantly, it initializes the <em>response_url</em> variable before any crawling.</p>
-
-<p>The <em>parse_item()</em> method has not changed from the last example.</p>
-
-<p>The <em>get_base_domain()</em> method (line 51) returns the base domain for a url.  For example, if &lsquo;http ://www.b.com:334/x/y.htm?z&rsquo; is passed in, &lsquo;b.com&rsquo; will be returned.</p>
-
-<p>The <em>filter_links()</em> method will filter all links passed in and only return links to external domains.  The base domain of the <em>response_url</em> is retrieved by <em>get_base_domain()</em> method (line 44).  Any links in the input list of links which contain this base domain are filtered out.  Only links to different (external) domains are returned.  This method is assigned to the <em>process_links</em> parameter in the Rule (line line 40).</p>
-
-<p>The <em>allow</em> parameter for the link extractor (line 15) is assigned the regular expression &ldquo;((mailto\:|(news|(ht|f)tp(s?))\://){1}\S+)&rdquo; which precludes any relative urls by only allowing urls that start with a <a href="http://en.wikipedia.org/wiki/URI_scheme">URI Scheme</a> (e.g. ftp, http, etc.).</p>
-
-<p>When a response is sent to a spider for processing, the <em>filter_links()</em> method is called before the <em>process_item()</em> method.  In this example, if the <em>response_url</em> variable is not set, it will fail.  This is the reason we needed to use the <em>parse_start_url()</em> method, which is called for each defined <em>start_url</em> and allows us to set the <em>response_url</em> variable before any links are processed by <em>filter_links()</em>.  This only allows fully qualified links to external urls to be sent to the engine for scheduled crawling.</p>
-
-<p>Next: Some MongoDB</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Scrapy After the Tutorials Part 1]]></title>
-<<<<<<< HEAD
     <link href="http://bgrva.github.io/blog/2014/03/04/scrapy-after-tutorials-part-1/"/>
     <updated>2014-03-04T09:22:33-05:00</updated>
     <id>http://bgrva.github.io/blog/2014/03/04/scrapy-after-tutorials-part-1</id>
@@ -1063,29 +909,12 @@ and new Requests (to follow) to the Engine.</p></blockquote>
 <p>   -Adding a spider parameter and using it from the command line<br/>
    -Getting current crawl depth and the referring url<br/>
    -Setting crawl depth limits<br/></p>
-=======
-    <link href="http://BgRva.github.io/blog/2014/03/04/scrapy-after-tutorials-part-1/"/>
-    <updated>2014-03-04T20:27:39-05:00</updated>
-    <id>http://BgRva.github.io/blog/2014/03/04/scrapy-after-tutorials-part-1</id>
-    <content type="html"><![CDATA[<p>I was given the task of building a scalable web scraper to harvest connections between domains of a specific industry in order to generate a network model of that industry’s online presence.  The scraper will need to run for a period of time, (say a week), and the resulting harvest would be the raw data from which the model would be generated.  This harvesting process will need to be repeatable to create ‘snapshots’ of the network for future longitudinal analysis.  The implementation will use <a href="http://www.yahoo.com" title="Scrapy">scrapy</a> with a <a href="http://www.mongodb.org" title="MongoDB">MongoDB</a> back end on a linux platform to be run (ultimately) in AWS.</p>
-
-<p>This post (and subsequent ones) will provide some code samples and documentation of issues faced during the process of getting the scraper operational.  The intent is to help bridge the gap between the initial scrapy tutorials and real-world code.  The examples assume you have scrapy installed and running, and have at least worked through the basic tutorials.  I did find many of the <a href="https://github.com/scrapy/scrapy/wiki">tutorials</a> on the wiki very helpful and worked through several of them, (multiple times).  Get a basic crawl spider up and running and then pick up here.</p>
-
-<p>In this example, I hope to demonstrate the the following scrapy features:<br />
-  &ndash; Adding a spider parameter and using it from the command line<br />
-  &ndash; Getting current crawl depth and the referring url<br />
-  &ndash; Setting crawl depth limits</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 <p>The code samples below were from a scrapy project named <strong>farm1</strong></p>
 
 <p>The item:</p>
 
-<<<<<<< HEAD
 <figure class='code'><figcaption><span>item  </span></figcaption>
-=======
-<figure class='code'><figcaption><span>Item </span></figcaption>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1105,7 +934,6 @@ and new Requests (to follow) to the Engine.</p></blockquote>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<<<<<<< HEAD
 <p><em>session_id</em>: a unique session id for each scrapy run or harvest<br/>
 <em>depth</em>: the depth of the current page with respect to the start url<br/>
 <em>current_url</em>: the url of the current page being processed<br/>
@@ -1114,16 +942,6 @@ and new Requests (to follow) to the Engine.</p></blockquote>
 <p>The crawl spider:</p>
 
 <figure class='code'><figcaption><span>spider  </span></figcaption>
-=======
-<p><em>session_id</em>:  a unique session id for each scrapy run or harvest<br />
-<em>depth</em>:  the depth of the current page with respect to the start url<br />
-<em>current_url</em>: the url of the current page being processed<br />
-<em>referring_url</em>: the url of the site which was linked to the current page<br /></p>
-
-<p>The crawl spider:</p>
-
-<figure class='code'><figcaption><span>Spider </span></figcaption>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1189,12 +1007,7 @@ and new Requests (to follow) to the Engine.</p></blockquote>
 
 <h4>Adding a spider parameter and using it from the command line</h4>
 
-<<<<<<< HEAD
 <p>Lines 14-16 in the spider shows the constructor which has a session_id parameter with a defaul assignment. The session id is assigned to the spider and persisted with each item processed and will be used to identify items from different harvest sessions. Defining the parameter in the constructor allows using it from the command line:</p>
-=======
-<p>Lines 14-16 in the spider shows the constructor which has a <em>session_id</em> parameter
-with a defaul assignment.  The session id is assigned to the spider and persisted with each item processed and will be used to identify items from different harvest sessions.  Defining the parameter in the constructor allows using it from the command line:</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>x:~$ scrapy crawl Harvester7 -a session_id=337</span></code></pre></td></tr></table></div></figure>
@@ -1202,7 +1015,6 @@ with a defaul assignment.  The session id is assigned to the spider and persiste
 
 <h4>Getting current crawl depth and the referring url</h4>
 
-<<<<<<< HEAD
 <p>Line 23 is where the current depth of the crawl is retrieved. The ‘depth’ key word is one of several <a href="http://doc.scrapy.org/en/latest/topics/request-response.html?highlight=meta#request-meta-special-keys">predefined keys</a> in the meta dictionary for the request and response objects. The depth value will be used in the analysis phase.</p>
 
 <p>Line 25 shows how to retrieve the referring url. The goal of this project was harvesting connections between domains, not just data from individual pages. For each item processed, the connection between two links: <em>referring_url –> current_url</em> is stored. Implied with each connection is the directionality of the link which will help build a directed graph for analysis. This is enabled by default in the <a href="https://scrapy.readthedocs.org/en/latest/topics/settings.html#std:setting-SPIDER_MIDDLEWARES_BASE">default middleware settings</a>, (and note that ‘Referer’ is the correct usage).</p>
@@ -1210,16 +1022,6 @@ with a defaul assignment.  The session id is assigned to the spider and persiste
 <h4>Setting crawl depth limits</h4>
 
 <p>Rather than use ctrl-c to kill the crawling spider, you can set a depth limit at which the spider will not go beyond. I found this helpful during testing. DEPTH_LIMIT is a predefined setting that can be assigned in your settings file. This was the only additional setting used in this example other than the defaults created with the project.</p>
-=======
-<p>Line 23 is where the current depth of the crawl is retrieved.  The ‘depth’ key word is one of several
-<a href="http://doc.scrapy.org/en/latest/topics/request-response.html?highlight=meta#request-meta-special-keys" title="pre-defined keys">predefined keys</a> in the meta dictionary for the request and response objects.  The depth value will be used in the analysis phase.</p>
-
-<p>Line 25 shows how to retrieve the referring url.  The goal of this project was harvesting connections between domains, not just data from individual pages.  For each item processed, the connection between two links: <em>referring_url</em> &ndash;> <em>current_url</em> is stored.  Implied with each connection is the directionality of the link which will help build a directed graph for analysis.  This is enabled by default in the <a href="https://scrapy.readthedocs.org/en/latest/topics/settings.html#std:setting-SPIDER_MIDDLEWARES_BASE" title="default middleware settings">default middleware settings</a>, (and note that &lsquo;Referer&rsquo; is the correct usage).</p>
-
-<h4>Setting crawl depth limits</h4>
-
-<p>Rather than use ctrl-c to kill the crawling spider, you can set a depth limit at which the spider will not go beyond.  I found this helpful during testing.  DEPTH_LIMIT is a predefined setting that can be assigned in your settings file.  This was the only additional setting used in this example other than the defaults created with the project.</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>DEPTH_LIMIT = 3</span></code></pre></td></tr></table></div></figure>
@@ -1231,13 +1033,7 @@ with a defaul assignment.  The session id is assigned to the spider and persiste
 </pre></td><td class='code'><pre><code class=''><span class='line'>x:~$ scrapy crawl Harvester1 –s DEPTH_LIMIT=2</span></code></pre></td></tr></table></div></figure>
 
 
-<<<<<<< HEAD
 <p>The command line assignment will take priority of the settings file. Note that the depth limit will have little affect if you are running a broad crawl. Ultimately, when this scraper is released into the wild, it will probably be set to run a <a href="http://doc.scrapy.org/en/latest/topics/broad-crawls.html?highlight=broad#broad-crawls">broad crawl</a>. But it will still need to troll deep to really pull out much of a domain’s public connections. As to how this will be handled, (a mix of broad + deep crawls), I am not sure but it will be documented here once it is figured out.</p>
-=======
-<p>The command line assignment will take priority of the settings file.  Note that the depth limit will have little affect if you are running a <a href="http://doc.scrapy.org/en/latest/topics/broad-crawls.html?highlight=broad#broad-crawls">broad crawl</a>.  Ultimately, when this scraper is released into the wild, it will probably be set to run a broad crawl.  But it will still need to troll deep to really pull out much of a domain&rsquo;s public connections.  As to how this will be handled, (a mix of broad + deep crawls), I am not sure but it will be documented here once it is figured out.</p>
-
-<p>Next:  Filtering links to follow</p>
->>>>>>> e9c6ac4372d9119a2c42d92f0654423fbf060313
 ]]></content>
   </entry>
   
