@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://bgrva.github.io/blog/2015/02/19/extract-subnet-by-steps/</loc>
+    <lastmod>2015-02-19T08:32:53-05:00</lastmod>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/2015/02/11/how-i-learned-to-love-yaml/</loc>
+    <lastmod>2015-02-11T10:01:01-05:00</lastmod>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/2014/04/13/deploy-crawler-to-ec2-with-scrapyd/</loc>
+    <lastmod>2014-04-13T21:21:01-04:00</lastmod>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/2014/03/23/scraping-to-mongodb/</loc>
+    <lastmod>2014-03-23T20:11:01-04:00</lastmod>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2/</loc>
+    <lastmod>2014-03-08T10:22:33-05:00</lastmod>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/2014/03/04/scrapy-after-tutorials-part-1/</loc>
+    <lastmod>2014-03-04T09:22:33-05:00</lastmod>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/</loc>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/archives/</loc>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/categories/python/</loc>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/categories/scrapy/</loc>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/categories/mongodb/</loc>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/categories/scrapyd/</loc>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/categories/yaml/</loc>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/categories/c-number/</loc>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/blog/categories/graphs/</loc>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/images/How I Learned to Love YAML - BgRva_files/tweet_button.html</loc>
+    <lastmod>2015-05-02T14:42:35-04:00</lastmod>
+  </url>
+  <url>
+    <loc>http://bgrva.github.io/images/How I Learned to Love YAML - BgRva.html</loc>
+    <lastmod>2015-05-02T14:42:35-04:00</lastmod>
+  </url>
+</urlset>

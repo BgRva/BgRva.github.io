@@ -1,101 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>BgRva</title>
-  <meta name="author" content="Michael Pastore">
-
-  
-  <meta name="description" content="What if you need a sub-network from a larger one, and how would you extract it? I&rsquo;ll walk you through the steps of how to do a Snowball &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="http://bgrva.github.io/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="BgRva" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-
-  
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">BgRva</a></h1>
-  
-    <h2>software, data, designs, &#8230;</h2>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="sitesearch" value="bgrva.github.io">
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
+  <title><![CDATA[BgRva]]></title>
+  <link href="http://bgrva.github.io/atom.xml" rel="self"/>
+  <link href="http://bgrva.github.io/"/>
+  <updated>2015-05-03T12:02:53-04:00</updated>
+  <id>http://bgrva.github.io/</id>
+  <author>
+    <name><![CDATA[Michael Pastore]]></name>
     
-      <h1 class="entry-title"><a href="/blog/2015/02/19/extract-subnet-by-steps/">Snowball Extraction of a Sub-Network</a></h1>
-    
-    
-      <p class="meta">
-        
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
-
-
-
-<time class='entry-date' datetime='2015-02-19T08:32:53-05:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>19</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>8:32 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>What if you need a sub-network from a larger one, and how would you extract it?  I&rsquo;ll walk you through the steps of how to do a Snowball extraction, (or extraction by steps).  I have no doubt this goes by many names, but Snowball is the name I&rsquo;ve been familiar with for years.</p>
+  
+  <entry>
+    <title type="html"><![CDATA[Snowball Extraction of a Sub-Network]]></title>
+    <link href="http://bgrva.github.io/blog/2015/02/19/extract-subnet-by-steps/"/>
+    <updated>2015-02-19T08:32:53-05:00</updated>
+    <id>http://bgrva.github.io/blog/2015/02/19/extract-subnet-by-steps</id>
+    <content type="html"><![CDATA[<p>What if you need a sub-network from a larger one, and how would you extract it?  I&rsquo;ll walk you through the steps of how to do a Snowball extraction, (or extraction by steps).  I have no doubt this goes by many names, but Snowball is the name I&rsquo;ve been familiar with for years.</p>
 
 <p>Assume you are given a network, and by network I mean a graph structure with data attributes on the nodes and/or edges such that the graph represents data connected with respect to a particular context.  For example, take a simple graph:</p>
 
-<p><img src="/images/simple-graph.jpg" width="326" height="254" title="'simple graph'" ></p>
+<p><img src="http://bgrva.github.io/images/simple-graph.jpg" width="326" height="254" title="'simple graph'" ></p>
 
 <p>Add some names and now it is a simple social network:</p>
 
-<p><img src="/images/simple-network.jpg" width="326" height="254" title="'simple social network'" ></p>
+<p><img src="http://bgrva.github.io/images/simple-network.jpg" width="326" height="254" title="'simple social network'" ></p>
 
 <p>Graph + Data = Network</p>
 
@@ -103,23 +34,23 @@
 
 <p>Lets start with the following example network and perform a snowball extraction 3 steps/hops out.</p>
 
-<p><img src="/images/network-0.jpg" width="629" height="418"></p>
+<p><img src="http://bgrva.github.io/images/network-0.jpg" width="629" height="418"></p>
 
 <p>Step 1: given a set of seed nodes: (2, 16), find all nodes 1 step or hop out from the seed nodes.  The nodes we are interested in are the neighbors of the seed nodes along <em>outgoing</em> edges, (in this example we will be considering the directionality of the edges).  Seed nodes are in green:</p>
 
-<p><img src="/images/network-1.jpg" width="629" height="418"></p>
+<p><img src="http://bgrva.github.io/images/network-1.jpg" width="629" height="418"></p>
 
 <p>Step 2: Now gather the new nodes found in Step 1: (1, 3, 9, 10, 36) and repeat the process:</p>
 
-<p><img src="/images/network-2.jpg" width="629" height="418"></p>
+<p><img src="http://bgrva.github.io/images/network-2.jpg" width="629" height="418"></p>
 
 <p>Step 3: Get the new nodes from step 2: (4, 6, 8, 1, 12, 17, 34) and repeat:</p>
 
-<p><img src="/images/network-3.jpg" width="629" height="418"></p>
+<p><img src="http://bgrva.github.io/images/network-3.jpg" width="629" height="418"></p>
 
 <p>Step 4: With the new nodes from step 3: (5, 7, 13, 15, 18, 19, 33), combine all found nodes and edges for the resulting sub-network:</p>
 
-<p><img src="/images/network-4-final.jpg" width="629" height="418"></p>
+<p><img src="http://bgrva.github.io/images/network-4-final.jpg" width="629" height="418"></p>
 
 <p>Note that using different seed nodes you may end up with a drastically different subnetwork and much depends on the structure and properties of the main network.  Additionally, how you handle duplicate edges, self-loops, and parallel-edges are completely determined by your problem at hand.  I&rsquo;ve attempted to formalize the steps as pseudo-code below, but again the complexities of the problem at hand will affect how this should be implemented.</p>
 
@@ -168,35 +99,15 @@
 
 
 
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/02/11/how-i-learned-to-love-yaml/">How I Learned to Love YAML</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-02-11T10:01:01-05:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>11</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:01 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>This post describes how I came to use <a href="http://www.yaml.org/">YAML</a> to handle complex data scenarios for integration test cases.</p>
+  <entry>
+    <title type="html"><![CDATA[How I Learned to Love YAML]]></title>
+    <link href="http://bgrva.github.io/blog/2015/02/11/how-i-learned-to-love-yaml/"/>
+    <updated>2015-02-11T10:01:01-05:00</updated>
+    <id>http://bgrva.github.io/blog/2015/02/11/how-i-learned-to-love-yaml</id>
+    <content type="html"><![CDATA[<p>This post describes how I came to use <a href="http://www.yaml.org/">YAML</a> to handle complex data scenarios for integration test cases.</p>
 
 <p>As a proponent of TDD, generating test data is a necessity.  When the units under test increase in complexity, so does the test data.  Test data can range from simple input strings used in <a href="http://www.nunit.org/index.php?p=testCase&amp;r=2.5">NUnit TestCaseAttribue</a> entries to custom test scenario objects which included raw data as well as expectations of varying outcomes.</p>
 
@@ -204,7 +115,7 @@
 
 <p>As an example of the range of test data needed for converting data to graphs,  here are 4 trivial examples of input data and the expected graph:</p>
 
-<p><img src="/images/graph-variations.jpg" title="'graph examples'" ></p>
+<p><img src="http://bgrva.github.io/images/graph-variations.jpg" title="'graph examples'" ></p>
 
 <p>The combinations of different sub-cases resulted in a multiple scenarios that needed to be built and managed. To compound things, each test case&rsquo;s data was hand jammed based on a known input an expected output.</p>
 
@@ -216,7 +127,7 @@
 
 <p>Here is the specification of a test scenario in YAML for example #4:</p>
 
-<p><img src="/images/graph-variation-4.jpg" title="'graph example 4'" ></p>
+<p><img src="http://bgrva.github.io/images/graph-variation-4.jpg" title="'graph example 4'" ></p>
 
 <figure class='code'><figcaption><span>scenario 4 as yaml </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -498,35 +409,15 @@
 
 
 <p>Now, if I need to add new data fields to support new tests, then only tricky thing is getting the YAML syntax correct in the data files and of course adding any new properties to the Scenario class. The parsing is handled by YamlDotNet no brain surgery is required.  If only I&rsquo;d found YAML earlier.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/13/deploy-crawler-to-ec2-with-scrapyd/">Deploy Crawler to EC2 With Scrapyd</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-04-13T21:21:01-04:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>13</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>9:21 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>This post will walk through using <a href="http://scrapyd.readthedocs.org/en/latest/">scrapyd</a> to deploy and manage a <a href="http://scrapy.org/">scrapy</a> spider from a local linux instance to a remote EC2 linux instance. The steps below were run on a local Ubuntu 12.04 instance any one of the free AWS linux Ubuntu 12.04 tiers. This is another step in the development of the scraping project described in the first post for which the indented goal is to have multiple instances of scrapy spiders crawling for extended periods of time and saving the items to a common database for further processing.</p>
+  <entry>
+    <title type="html"><![CDATA[Deploy Crawler to EC2 With Scrapyd]]></title>
+    <link href="http://bgrva.github.io/blog/2014/04/13/deploy-crawler-to-ec2-with-scrapyd/"/>
+    <updated>2014-04-13T21:21:01-04:00</updated>
+    <id>http://bgrva.github.io/blog/2014/04/13/deploy-crawler-to-ec2-with-scrapyd</id>
+    <content type="html"><![CDATA[<p>This post will walk through using <a href="http://scrapyd.readthedocs.org/en/latest/">scrapyd</a> to deploy and manage a <a href="http://scrapy.org/">scrapy</a> spider from a local linux instance to a remote EC2 linux instance. The steps below were run on a local Ubuntu 12.04 instance any one of the free AWS linux Ubuntu 12.04 tiers. This is another step in the development of the scraping project described in the first post for which the indented goal is to have multiple instances of scrapy spiders crawling for extended periods of time and saving the items to a common database for further processing.</p>
 
 <p>This post assumes you have scrapy and scrapyd installed on a local (linux) system, a working scrapy crawler, an AWS account, and have some knowledge of basic web security practices. Note: If you have not yet installed scrapy on your local system, when installing pip for scrapy, install the ‘setup tools’ and not the ‘distro tools’, as the setup tools will be needed by scrapyd for ‘egg-i-fying’ crawlers for deployment.</p>
 
@@ -543,10 +434,10 @@
 <p>3) Create a Security Group with the following inbound and outbound rules:</p>
 
 <p>Inbound (for inbound ssh and scrapyd communication):
-<img src="/images/ec2-inbound-rules.jpg" title="inbound rules" alt="image of ec2 inbound rules"></p>
+<img src="http://bgrva.github.io/images/ec2-inbound-rules.jpg" title="inbound rules" alt="image of ec2 inbound rules"></p>
 
 <p>Outbound (for outbound scrapyd and crawler http gets):
-<img src="/images/ec2-outbound-rules.jpg" title="outbound rules" alt="image of ec2 outbound rules"></p>
+<img src="http://bgrva.github.io/images/ec2-outbound-rules.jpg" title="outbound rules" alt="image of ec2 outbound rules"></p>
 
 <p>4) Create a key value pair for the ‘dev’ user and download it so you have access to it on your local system</p>
 
@@ -695,35 +586,15 @@
 
 
 <p>Note that the <em>schedule</em> and <em>cancel</em> commands of the scrapyd webservice are not immediate, so give them a bit to take affect. When getting started, the scrapyd web page on the EC2 instance is the easiest way of viewing the logs and output items.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/23/scraping-to-mongodb/">Scrapy to MongoDB</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-03-23T20:11:01-04:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2014</span></span> <span class='time'>8:11 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Now that we can crawl some sites (based on the previous posts), we need to persist the data somewhere where it can be retrieved and processed for analysis. Recall that the goal of the scraper was to harvest connections between domains in order to generate a model of a specific industry’s on-line presence. In Scrapy, <a href="http://doc.scrapy.org/en/latest/topics/item-pipeline.html">Item Pipelines</a> are the prescribed mechanism by which scraped items can be persisted to a data store. In this post, we will be using a custom pipeline extension for <a href="http://www.mongodb.org/">MongoDB</a> which we will further customize to check for duplicates. The code examples in this post build upon those in the previous examples. It is also assumed that you have some familiarity with MongoDB and have a working (basic) crawl spider. It does not cover installing Scrapy, MongoDB, or any dependencies, (there is plenty of good documentation on these subjects). Before continuing, you will need to install the following (in addition to having Scrapy working):</p>
+  <entry>
+    <title type="html"><![CDATA[Scrapy to MongoDB]]></title>
+    <link href="http://bgrva.github.io/blog/2014/03/23/scraping-to-mongodb/"/>
+    <updated>2014-03-23T20:11:01-04:00</updated>
+    <id>http://bgrva.github.io/blog/2014/03/23/scraping-to-mongodb</id>
+    <content type="html"><![CDATA[<p>Now that we can crawl some sites (based on the previous posts), we need to persist the data somewhere where it can be retrieved and processed for analysis. Recall that the goal of the scraper was to harvest connections between domains in order to generate a model of a specific industry’s on-line presence. In Scrapy, <a href="http://doc.scrapy.org/en/latest/topics/item-pipeline.html">Item Pipelines</a> are the prescribed mechanism by which scraped items can be persisted to a data store. In this post, we will be using a custom pipeline extension for <a href="http://www.mongodb.org/">MongoDB</a> which we will further customize to check for duplicates. The code examples in this post build upon those in the previous examples. It is also assumed that you have some familiarity with MongoDB and have a working (basic) crawl spider. It does not cover installing Scrapy, MongoDB, or any dependencies, (there is plenty of good documentation on these subjects). Before continuing, you will need to install the following (in addition to having Scrapy working):</p>
 
 <p>– <a href="http://www.mongodb.org/">MongoDB</a><br/>
 – <a href="https://github.com/sebdah/scrapy-mongodb">Scrapy-MongoDB</a>, an item pipeline extension written by Sebastian Dahlgren<br/></p>
@@ -863,35 +734,15 @@
 
 
 
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/08/scrapy-after-tutorials-part-2/">Scrapy After the Tutorials Part 2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-03-08T10:22:33-05:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>10:22 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>As described in the previous post, the scraper will be crawling over extended periods of time. Filtering out links which do not need to be crawled is one way of improving performance: less links to crawl = less items to process. In this example, I hope to demonstrate how to filter the links to be crawled. So how does the scraper determine which links to follow and how can we modify this behavior? Using step #7 in the <a href="http://doc.scrapy.org/en/latest/topics/architecture.html#data-flow">Data Flow</a> as reference:</p>
+  <entry>
+    <title type="html"><![CDATA[Scrapy After the Tutorials Part 2]]></title>
+    <link href="http://bgrva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2/"/>
+    <updated>2014-03-08T10:22:33-05:00</updated>
+    <id>http://bgrva.github.io/blog/2014/03/08/scrapy-after-tutorials-part-2</id>
+    <content type="html"><![CDATA[<p>As described in the previous post, the scraper will be crawling over extended periods of time. Filtering out links which do not need to be crawled is one way of improving performance: less links to crawl = less items to process. In this example, I hope to demonstrate how to filter the links to be crawled. So how does the scraper determine which links to follow and how can we modify this behavior? Using step #7 in the <a href="http://doc.scrapy.org/en/latest/topics/architecture.html#data-flow">Data Flow</a> as reference:</p>
 
 <blockquote><p>The Spider processes the Response and returns scraped Items and new Requests (to follow) to the Engine.</p></blockquote>
 
@@ -1041,35 +892,15 @@
 <p>The allow parameter for the link extractor (line 15) is assigned the regular expression “((mailto:|(news|(ht|f)tp(s?))://){1}\S+)” which precludes any relative urls by only allowing urls that start with a <a href="http://en.wikipedia.org/wiki/URI_scheme">URI Scheme</a> (e.g. ftp, http, etc.).</p>
 
 <p>When a response is sent to a spider for processing, the filter_links() method is called before the process_item() method. In this example, if the response_url variable is not set, it will fail. This is the reason we needed to use the parse_start_url() method, which is called for each defined start_url and allows us to set the response_url variable before any links are processed by filter_links(). This only allows fully qualified links to external urls to be sent to the engine for scheduled crawling.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/04/scrapy-after-tutorials-part-1/">Scrapy After the Tutorials Part 1</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2014-03-04T09:22:33-05:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>9:22 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>I was given the task of building a scalable web scraper to harvest connections between domains of a specific industry in order to generate a network model of that industry’s online presence. The scraper will need to run for a period of time, (say a week), and the resulting harvest would be the raw data from which the model would be generated. This harvesting process will need to be repeatable to create ‘snapshots’ of the network for future longitudinal analysis. The implementation will use <a href="http://www.scrapy.org/">scrapy</a> with a <a href="http://www.mongodb.org">MongoDB</a> back end on a linux platform to be run (ultimately) in AWS.</p>
+  <entry>
+    <title type="html"><![CDATA[Scrapy After the Tutorials Part 1]]></title>
+    <link href="http://bgrva.github.io/blog/2014/03/04/scrapy-after-tutorials-part-1/"/>
+    <updated>2014-03-04T09:22:33-05:00</updated>
+    <id>http://bgrva.github.io/blog/2014/03/04/scrapy-after-tutorials-part-1</id>
+    <content type="html"><![CDATA[<p>I was given the task of building a scalable web scraper to harvest connections between domains of a specific industry in order to generate a network model of that industry’s online presence. The scraper will need to run for a period of time, (say a week), and the resulting harvest would be the raw data from which the model would be generated. This harvesting process will need to be repeatable to create ‘snapshots’ of the network for future longitudinal analysis. The implementation will use <a href="http://www.scrapy.org/">scrapy</a> with a <a href="http://www.mongodb.org">MongoDB</a> back end on a linux platform to be run (ultimately) in AWS.</p>
 
 <p>This post (and subsequent ones) will provide some code samples and documentation of issues faced during the process of getting the scraper operational. The intent is to help bridge the gap between the initial scrapy tutorials and real-world code. The examples assume you have scrapy installed and running, and have at least worked through the basic tutorials. I did find many of the <a href="https://github.com/scrapy/scrapy/wiki">tutorials</a> on the wiki very helpful and worked through several of them, (multiple times). Get a basic crawl spider up and running and then pick up here.</p>
 
@@ -1203,135 +1034,7 @@
 
 
 <p>The command line assignment will take priority of the settings file. Note that the depth limit will have little affect if you are running a broad crawl. Ultimately, when this scraper is released into the wild, it will probably be set to run a <a href="http://doc.scrapy.org/en/latest/topics/broad-crawls.html?highlight=broad#broad-crawls">broad crawl</a>. But it will still need to troll deep to really pull out much of a domain’s public connections. As to how this will be handled, (a mix of broad + deep crawls), I am not sure but it will be documented here once it is figured out.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
-<aside class="sidebar">
-  
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2015/02/19/extract-subnet-by-steps/">Snowball Extraction of a Sub-Network</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/02/11/how-i-learned-to-love-yaml/">How I Learned to Love YAML</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/13/deploy-crawler-to-ec2-with-scrapyd/">Deploy Crawler to EC2 With Scrapyd</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/03/23/scraping-to-mongodb/">Scrapy to MongoDB</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/03/08/scrapy-after-tutorials-part-2/">Scrapy After the Tutorials Part 2</a>
-      </li>
-    
-  </ul>
-</section>
-
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
-  </ul>
-  
-  <a href="https://github.com/BgRva">@BgRva</a> on GitHub
-  
-  <script type="text/javascript">
-    $(document).ready(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'BgRva',
-            count: 0,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-
-
-  
-</aside>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2015 - Michael Pastore -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'BgRva';
-      
-        
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) {return;}
-  js = d.createElement(s); js.id = id; js.async = true;
-  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
-</html>
+</feed>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Graphs | BgRva]]></title>
+  <link href="http://bgrva.github.io/blog/categories/graphs/atom.xml" rel="self"/>
+  <link href="http://bgrva.github.io/"/>
+  <updated>2015-05-03T12:02:53-04:00</updated>
+  <id>http://bgrva.github.io/</id>
+  <author>
+    <name><![CDATA[Michael Pastore]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Snowball Extraction of a Sub-Network]]></title>
+    <link href="http://bgrva.github.io/blog/2015/02/19/extract-subnet-by-steps/"/>
+    <updated>2015-02-19T08:32:53-05:00</updated>
+    <id>http://bgrva.github.io/blog/2015/02/19/extract-subnet-by-steps</id>
+    <content type="html"><![CDATA[<p>What if you need a sub-network from a larger one, and how would you extract it?  I&rsquo;ll walk you through the steps of how to do a Snowball extraction, (or extraction by steps).  I have no doubt this goes by many names, but Snowball is the name I&rsquo;ve been familiar with for years.</p>
+
+<p>Assume you are given a network, and by network I mean a graph structure with data attributes on the nodes and/or edges such that the graph represents data connected with respect to a particular context.  For example, take a simple graph:</p>
+
+<p><img src="/images/simple-graph.jpg" width="326" height="254" title="&lsquo;simple graph&rsquo;" ></p>
+
+<p>Add some names and now it is a simple social network:</p>
+
+<p><img src="/images/simple-network.jpg" width="326" height="254" title="&lsquo;simple social network&rsquo;" ></p>
+
+<p>Graph + Data = Network</p>
+
+<h3>A Snowball Extration</h3>
+
+<p>Lets start with the following example network and perform a snowball extraction 3 steps/hops out.</p>
+
+<p><img src="/images/network-0.jpg" width="629" height="418"></p>
+
+<p>Step 1: given a set of seed nodes: (2, 16), find all nodes 1 step or hop out from the seed nodes.  The nodes we are interested in are the neighbors of the seed nodes along <em>outgoing</em> edges, (in this example we will be considering the directionality of the edges).  Seed nodes are in green:</p>
+
+<p><img src="/images/network-1.jpg" width="629" height="418"></p>
+
+<p>Step 2: Now gather the new nodes found in Step 1: (1, 3, 9, 10, 36) and repeat the process:</p>
+
+<p><img src="/images/network-2.jpg" width="629" height="418"></p>
+
+<p>Step 3: Get the new nodes from step 2: (4, 6, 8, 1, 12, 17, 34) and repeat:</p>
+
+<p><img src="/images/network-3.jpg" width="629" height="418"></p>
+
+<p>Step 4: With the new nodes from step 3: (5, 7, 13, 15, 18, 19, 33), combine all found nodes and edges for the resulting sub-network:</p>
+
+<p><img src="/images/network-4-final.jpg" width="629" height="418"></p>
+
+<p>Note that using different seed nodes you may end up with a drastically different subnetwork and much depends on the structure and properties of the main network.  Additionally, how you handle duplicate edges, self-loops, and parallel-edges are completely determined by your problem at hand.  I&rsquo;ve attempted to formalize the steps as pseudo-code below, but again the complexities of the problem at hand will affect how this should be implemented.</p>
+
+<p><figure class='code'><figcaption><span>pseudo-code</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="p">&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span><span class="n">foundNodes</span> <span class="p">{}</span>   <span class="c1">// all nodes found in the snowball so far</span>
+</span><span class='line'><span class="n">currentNodes</span> <span class="p">{}</span> <span class="c1">// the current nodes from which we are stepping out</span>
+</span><span class='line'><span class="n">currentEdges</span> <span class="p">{}</span> <span class="c1">// the edges we find outgoing from the current nodes</span>
+</span><span class='line'><span class="n">maxStep</span> <span class="p">=</span> <span class="m">3</span>
+</span><span class='line'><span class="n">currentStep</span> <span class="p">=</span> <span class="m">1</span><span class="p">&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span><span class="n">nextNodes</span> <span class="p">=</span> <span class="p">{</span><span class="n">SEEDS</span><span class="p">}</span>  <span class="c1">// this should be initialized to the seeds 4,10&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span><span class="k">while</span> <span class="p">(</span><span class="n">currentStep</span> <span class="p">&amp;</span><span class="n">lt</span><span class="p">;=</span> <span class="n">maxStep</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">currentNodes</span> <span class="p">=</span> <span class="n">nextNodes</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">foundNodes</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">currentNodes</span><span class="p">);&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span>  <span class="k">foreach</span> <span class="n">each</span> <span class="n">edge</span>
+</span><span class='line'>    <span class="n">If</span> <span class="n">edge</span><span class="p">.</span><span class="n">SourceId</span>  <span class="k">is</span> <span class="k">in</span> <span class="n">currentNodes</span>
+</span><span class='line'>      <span class="n">currentEdges</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">edge</span><span class="p">)&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span>  <span class="n">nextNodes</span> <span class="p">=</span> <span class="p">{}</span>
+</span><span class='line'>  <span class="k">foreach</span> <span class="n">edge</span> <span class="k">in</span> <span class="n">currentEdges</span>
+</span><span class='line'>    <span class="n">If</span> <span class="n">edge</span><span class="p">.</span><span class="n">TargetId</span> <span class="k">is</span> <span class="n">NOT</span> <span class="k">in</span> <span class="n">foundNodes</span>
+</span><span class='line'>      <span class="n">nextNodes</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">edge</span><span class="p">.</span><span class="n">TargetId</span><span class="p">)&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
+  
+</feed>

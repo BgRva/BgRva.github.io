@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Yaml | BgRva]]></title>
+  <link href="http://bgrva.github.io/blog/categories/yaml/atom.xml" rel="self"/>
+  <link href="http://bgrva.github.io/"/>
+  <updated>2015-05-03T12:02:53-04:00</updated>
+  <id>http://bgrva.github.io/</id>
+  <author>
+    <name><![CDATA[Michael Pastore]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[How I Learned to Love YAML]]></title>
+    <link href="http://bgrva.github.io/blog/2015/02/11/how-i-learned-to-love-yaml/"/>
+    <updated>2015-02-11T10:01:01-05:00</updated>
+    <id>http://bgrva.github.io/blog/2015/02/11/how-i-learned-to-love-yaml</id>
+    <content type="html"><![CDATA[<p>This post describes how I came to use <a href="http://www.yaml.org/">YAML</a> to handle complex data scenarios for integration test cases.</p>
+
+<p>As a proponent of TDD, generating test data is a necessity.  When the units under test increase in complexity, so does the test data.  Test data can range from simple input strings used in <a href="http://www.nunit.org/index.php?p=testCase&amp;r=2.5">NUnit TestCaseAttribue</a> entries to custom test scenario objects which included raw data as well as expectations of varying outcomes.</p>
+
+<p>Generating complex test scenarios was especially the case when I was working on an application that did graph manipulation and required converting raw data to graph structures.  Because of the variations in graph structures that had to be handled when converting from input data, the test scenarios had to provide the raw data to be converted to a graph, the expected graph structure, and other expectations.  These custom scenario objects required creating code to read them in, to access the data and expectations, as well as managing changes  without requiring brain surgery on the codebase.</p>
+
+<p>As an example of the range of test data needed for converting data to graphs,  here are 4 trivial examples of input data and the expected graph:</p>
+
+<p><img src="/images/graph-variations.jpg" title="&lsquo;graph examples&rsquo;" ></p>
+
+<p>The combinations of different sub-cases resulted in a multiple scenarios that needed to be built and managed. To compound things, each test case&rsquo;s data was hand jammed based on a known input an expected output.</p>
+
+<p>In the past, I would end up with some fairly easy to read text file format and multiple parsers to ingest the files and create the scenario objects to feed the tests.  While the parsers themselves were simple and required limited error handling, the requirements of the scenarios would inevitably change over the course of the project.  For example, let’s say based on some new functionality, in order to implement the tests we needed to know the expected number of <em>self-loops</em> (an edge that has the same source and target node) for an input graph.  This would require adding a new property to the scenario object, updating the parsers, and verifying the parsers worked.  While not difficult or risky, these updates still sponge up valuable time and resources.</p>
+
+<p>How come I didn’t format the data as XML or JSON?  Because the integration tests requiring the complex test data grew out of need rather than full up-front awareness and planning (these being developer level integration tests arising from TDD).  The data usually started out for use in simple unit tests, and over time it was aggregated to form a scenario.  The code to support the scenarios grew and morphed as the tests and the project code did.</p>
+
+<p>Here is where <a href="http://www.yaml.org/">YAML</a> enters the picture.  Very briefly, YAML (<em>YAML Ain&rsquo;t Markup Language</em>) is a human friendly parse-able specification for which there exist parsers in multiple languages.  In other words, perfect for these test data scenarios.  There are many, many, awesome tutorials on it, so I will simply focus on how I used YAML to handle the scenario data.  For the examples below, I am using <a href="https://github.com/aaubry/YamlDotNet">YamlDotNet</a> by Antoine Aubry.  Though YAML.org identifies other .Net parsers, they have not been updated in quite some time. On top of that, YamlDotNet is very nice.</p>
+
+<p>Here is the specification of a test scenario in YAML for example #4:</p>
+
+<p><img src="/images/graph-variation-4.jpg" title="&lsquo;graph example 4&rsquo;" ></p>
+
+<h2><figure class='code'><figcaption><span>scenario 4 as yaml </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">&lt;/h2&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">&lt;pre&gt;&lt;code&gt;id</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">4</span>
+</span><span class='line'><span class="l-Scalar-Plain">node-content-format</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Name</span>
+</span><span class='line'><span class="l-Scalar-Plain">edge-content-format</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Empty</span>
+</span><span class='line'><span class="l-Scalar-Plain">description</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">scenario to test parallel edges and self-loops including an orphan</span>
+</span><span class='line'><span class="l-Scalar-Plain">raw-nodes</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">3</span>
+</span><span class='line'><span class="l-Scalar-Plain">raw-edges</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">4</span>
+</span><span class='line'><span class="l-Scalar-Plain">expected-nodes</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">3</span>
+</span><span class='line'><span class="l-Scalar-Plain">expected-edges</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">4</span>
+</span><span class='line'><span class="l-Scalar-Plain">expected-self-loops</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">2</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">nodes</span><span class="p-Indicator">:</span>
+</span><span class='line'>    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">id</span><span class="p-Indicator">:</span>    <span class="l-Scalar-Plain">0</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">content</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(LEELA)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">id</span><span class="p-Indicator">:</span>    <span class="l-Scalar-Plain">1</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">content</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(FRY)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">id</span><span class="p-Indicator">:</span>    <span class="l-Scalar-Plain">2</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">content</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(BENDER)</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">edges</span><span class="p-Indicator">:</span>
+</span><span class='line'>    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">id</span><span class="p-Indicator">:</span>         <span class="l-Scalar-Plain">0</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">source-id</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">0</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">target-id</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">1</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">content</span><span class="p-Indicator">:</span>    <span class="l-Scalar-Plain">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">id</span><span class="p-Indicator">:</span>         <span class="l-Scalar-Plain">1</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">source-id</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">1</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">target-id</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">0</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">content</span><span class="p-Indicator">:</span>    <span class="l-Scalar-Plain">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">id</span><span class="p-Indicator">:</span>         <span class="l-Scalar-Plain">2</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">source-id</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">1</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">target-id</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">1</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">content</span><span class="p-Indicator">:</span>    <span class="l-Scalar-Plain">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">id</span><span class="p-Indicator">:</span>         <span class="l-Scalar-Plain">3</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">source-id</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">2</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">target-id</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">2</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">content</span><span class="p-Indicator">:</span>    <span class="l-Scalar-Plain">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">expected-structure</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">0</span><span class="p-Indicator">,</span><span class="nv">1</span><span class="p-Indicator">,</span><span class="nv">0</span><span class="p-Indicator">]</span>
+</span><span class='line'>                    <span class="p-Indicator">[</span><span class="nv">1</span><span class="p-Indicator">,</span><span class="nv">1</span><span class="p-Indicator">,</span><span class="nv">0</span><span class="p-Indicator">]</span>
+</span><span class='line'>                    <span class="p-Indicator">[</span><span class="nv">0</span><span class="p-Indicator">,</span><span class="nv">0</span><span class="p-Indicator">,</span><span class="nv">1</span><span class="p-Indicator">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">expected-edge-structure</span><span class="p-Indicator">:</span> <span class="p-Indicator">[]</span>  <span class="p-Indicator">[</span><span class="nv">1</span><span class="p-Indicator">]</span> <span class="p-Indicator">[</span><span class="nv">0</span><span class="p-Indicator">]</span>
+</span><span class='line'>                         <span class="p-Indicator">[</span><span class="nv">1</span><span class="p-Indicator">]</span> <span class="p-Indicator">[]</span>  <span class="p-Indicator">[]</span>
+</span><span class='line'>                         <span class="p-Indicator">[</span><span class="nv">1</span><span class="p-Indicator">]</span> <span class="p-Indicator">[]</span>  <span class="p-Indicator">[]</span>
+</span><span class='line'><span class="l-Scalar-Plain">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>This test data was parsed in to a Scenario class instance that was used to feed integration tests:</p>
+
+<p><figure class='code'><figcaption><span>Scenario class structure </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="p">&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span>  <span class="k">public</span> <span class="k">class</span> <span class="nc">Scenario</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="nf">Scenario</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="n">Nodes</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">NodeIndicator</span><span class="p">&gt;();</span>
+</span><span class='line'>      <span class="n">Edges</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">EdgeIndicator</span><span class="p">&gt;();</span>
+</span><span class='line'>    <span class="p">}&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">pre</span><span class="p">&gt;&lt;</span><span class="n">code</span><span class="p">&gt;</span><span class="k">public</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="k">public</span> <span class="kt">string</span> <span class="n">Description</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="na">[YamlAlias(&quot;node-content-format&quot;)]</span>
+</span><span class='line'><span class="k">public</span> <span class="n">ScenarioNodeContentFormat</span> <span class="n">NodeContentFormat</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="na">[YamlAlias(&quot;edge-content-format&quot;)]</span>
+</span><span class='line'><span class="k">public</span> <span class="n">ScenarioEdgeContentFormat</span> <span class="n">EdgeContentFormat</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="k">public</span> <span class="n">List</span><span class="p">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">NodeIndicator</span><span class="p">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">Nodes</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="k">public</span> <span class="n">List</span><span class="p">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">EdgeIndicator</span><span class="p">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">Edges</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="na">[YamlAlias(&quot;raw-nodes&quot;)]</span>
+</span><span class='line'><span class="k">public</span> <span class="kt">int</span> <span class="n">NodeCountRaw</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="na">[YamlAlias(&quot;raw-edges&quot;)]</span>
+</span><span class='line'><span class="k">public</span> <span class="kt">int</span> <span class="n">EdgeCountRaw</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="na">[YamlAlias(&quot;expected-nodes&quot;)]</span>
+</span><span class='line'><span class="k">public</span> <span class="kt">int</span> <span class="n">NodeCountExpected</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="na">[YamlAlias(&quot;expected-edges&quot;)]</span>
+</span><span class='line'><span class="k">public</span> <span class="kt">int</span> <span class="n">EdgeCountExpected</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="na">[YamlAlias(&quot;expected-self-loops&quot;)]</span>
+</span><span class='line'><span class="k">public</span> <span class="kt">int</span> <span class="n">ExpectedSelfLoops</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="na">[YamlAlias(&quot;expected-structure&quot;)]</span>
+</span><span class='line'><span class="k">public</span> <span class="kt">string</span> <span class="n">ExpectedStructure</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="na">[YamlAlias(&quot;expected-edge-structure&quot;)]</span>
+</span><span class='line'><span class="k">public</span> <span class="kt">string</span> <span class="n">ExpectedEdgeStructure</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">&lt;/</span><span class="n">code</span><span class="p">&gt;&lt;/</span><span class="n">pre</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span>  <span class="p">}&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span>  <span class="c1">//&amp;mdash;&amp;mdash;&amp;mdash;-</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">EdgeIndicator</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'><span class="na">    [YamlAlias(&amp;ldquo;source-id&amp;rdquo;)]</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">int</span> <span class="n">SourceId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="na">    [YamlAlias(&amp;ldquo;target-id&amp;rdquo;)]</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">int</span> <span class="n">TargetId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">Content</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span>  <span class="c1">//&amp;mdash;&amp;mdash;&amp;mdash;-</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">class</span> <span class="nc">NodeIndicator</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="nf">NodeIndicator</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="n">Id</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">Content</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="p">}&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span>  <span class="c1">//&amp;mdash;&amp;mdash;&amp;mdash;-</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">enum</span> <span class="n">ScenarioNodeContentFormat</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">Empty</span><span class="p">,</span>
+</span><span class='line'>    <span class="n">Name</span><span class="p">,</span>
+</span><span class='line'>  <span class="p">};&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span>  <span class="c1">//&amp;mdash;&amp;mdash;&amp;mdash;-</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">enum</span> <span class="n">ScenarioEdgeContentFormat</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">Empty</span><span class="p">,</span>
+</span><span class='line'>    <span class="n">Name</span><span class="p">,</span>
+</span><span class='line'>  <span class="p">};&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">&lt;</span><span class="n">p</span><span class="p">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Some explanations about the Scenario class:</p>
+
+<ul>
+<li><em>NodeIndicator</em> and <em>EdgeIndicator</em> are objects that &lsquo;indicate&rsquo; how a node or edge are to be constructed or connected, not the nodes or edges themselves.  It is up to the calling code that builds the graph to interpret this.</li>
+<li>The <em>Content</em> property for each indicator represents a string into which different data can be associated with a node or edge.  For example, each node has a content value of a name surrounded by parenthesis:</li>
+</ul>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'>        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">id</span><span class="p-Indicator">:</span>    <span class="l-Scalar-Plain">0</span>
+</span><span class='line'>          <span class="l-Scalar-Plain">content</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(LEELA)</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<ul>
+<li>The format of the node and edge Content field is specified by the <em>NodeContentFormat</em> and <em>EdgeContentFormat</em> properties (respectively)</li>
+<li>The <em>ExpectedStructure</em> is a string representation of the expected structure of the graph once it is constructed.  The string is a row-major representation of the graph as a matrix.</li>
+<li>The <em>ExpectedEdgeStructure</em>  is a string representation of the expected connectivity of the edges in the resulting graph.  The format is as follows
+
+<ul>
+<li>Each row represents the edges indicent to a node starting at node index 0</li>
+<li>The contents of each row are
+
+<ul>
+<li>First &lsquo;[]&rsquo; is an array of edge ids for self loops (* self loops are not included in the inbound or outbound arrays ).</li>
+<li>Second &lsquo;[]&rsquo; is an array of edge ids for inbound edges</li>
+<li>Third &lsquo;[]&rsquo; is an array of edge ids for outbound edges</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<p>Now, if I need to add new data fields to support new tests, then only tricky thing is getting the YAML syntax correct in the data files and of course adding any new properties to the Scenario class. The parsing is handled by YamlDotNet no brain surgery is required.  If only I&rsquo;d found YAML earlier.</p>
+]]></content>
+  </entry>
+  
+</feed>
