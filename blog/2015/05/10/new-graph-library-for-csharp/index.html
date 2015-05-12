@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>A New Graph Library for C# - BgRva</title>
+  <meta name="author" content="Michael Pastore">
+
+  
+  <meta name="description" content="You are probably thinking: Really? Similar libraries exist and they are just fine, so why a new one? Before I dive in to the pros and cons of this &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bgrva.github.io/blog/2015/05/10/new-graph-library-for-csharp/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="BgRva" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">BgRva</a></h1>
+  
+    <h2>software, data, designs, &#8230;</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="bgrva.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">A New Graph Library for C#</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-10T10:01:01-04:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:01 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>You are probably thinking: <em>Really</em>?  Similar libraries exist and they are just fine, so why a new one?  Before I dive in to the pros and cons of this adventure, let me clarify what I mean by &ldquo;Graph&rdquo; Library. I&rsquo;m talking about a <a href="http://en.wikipedia.org/wiki/Graph_theory">graph</a> as set of nodes and edges where each edge connects two nodes.  There are several libraries available in C# that fall within this scope and they are all quite awesome. A few are listed below, but excluded are graph libraries for visualization or for specific purposes such as ontologies.</p>
+
+<ul>
+<li><a href="https://quickgraph.codeplex.com/">Quickgraph</a><br/></li>
+<li><a href="https://github.com/SolutionsDesign/Algorithmia/">Algorithmia</a><br/></li>
+</ul>
+
+
+<p>The thing about implementing a graph in code is that it is all about compromises. Some implementations may emphasize speed, extensibility, customizability, etc., but each will have its strengths and weaknesses.  For example, here is a simple case of a compromise that may arise when considering a graph implementation as an <a href="http://en.wikipedia.org/wiki/Adjacency_list">adjacency list</a>. Assume we were implementing a graph and wanted to allow consumers of the code to access the nodes by index from 0 to n-1 (where n is the number of nodes in the graph) in O(1) time.  The code samples that follow are simply interface definitions for discussion purposes, implementation details are all hand-waving.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">interface</span> <span class="n">INode</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">Index</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">interface</span> <span class="n">IGraph</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">IList</span><span class="p">&lt;</span><span class="n">INode</span><span class="p">&gt;</span> <span class="n">Nodes</span> <span class="p">{</span> <span class="k">get</span><span class="p">;}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">NodeCount</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Given an instance of IGraph g, access nodes by index</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">node1</span> <span class="p">=</span> <span class="n">g</span><span class="p">.</span><span class="n">Nodes</span><span class="p">[</span><span class="m">1</span><span class="p">];</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">node2</span> <span class="p">=</span> <span class="n">g</span><span class="p">.</span><span class="n">Nodes</span><span class="p">[</span><span class="m">2</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>How nodes are accessed is coupled with how nodes are added and removed.  Should we allow the user to create a node object and add the node to the graph or should we allow the graph to handle creation of the node?  Each choice has implications for the rest of the implementation.  Consider the following two approaches for adding a node:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">interface</span> <span class="n">IGraph</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">List</span><span class="p">&lt;</span><span class="n">INode</span><span class="p">&gt;</span> <span class="n">Nodes</span> <span class="p">{</span> <span class="k">get</span><span class="p">;}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">NodeCount</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">/// &lt;summary&gt;</span>
+</span><span class='line'>    <span class="c1">/// #1 The user creates the node and adds it to the graph object and returns</span>
+</span><span class='line'>    <span class="c1">/// the graph assigned index of the node.</span>
+</span><span class='line'>    <span class="c1">/// &lt;/summary&gt;</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="nf">AddNode</span><span class="p">(</span> <span class="n">INode</span> <span class="n">newNode</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">/// &lt;summary&gt;</span>
+</span><span class='line'>    <span class="c1">/// #2 The graph instance creates and returns the node object, with an assigned index</span>
+</span><span class='line'>    <span class="c1">/// &lt;/summary&gt;</span>
+</span><span class='line'>    <span class="n">INode</span> <span class="nf">AddNode</span><span class="p">()</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Given an instance of IGraph g:</span>
+</span><span class='line'><span class="c1">// #1</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">node1</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Node</span><span class="p">();</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">index</span> <span class="p">=</span> <span class="n">g</span><span class="p">.</span><span class="n">AddNode</span><span class="p">(</span><span class="n">node1</span><span class="p">);</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">node</span> <span class="p">=</span> <span class="n">g</span><span class="p">.</span><span class="n">Nodes</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// #2</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">g</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Graph</span><span class="p">();</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">node</span> <span class="p">=</span> <span class="n">g</span><span class="p">.</span><span class="n">AddNode</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Whereas #1 requires the user to instantiate a node, in #2 the graph maintains more control over instantiation but reduces the flexibility of where and how the user can create a node as the graph object must be instantiated first.  Both approaches still allow for accessing any node by index, but things get sticky when we consider removing a node:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="kt">var</span> <span class="n">g</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Graph</span><span class="p">();</span>
+</span><span class='line'><span class="c1">// create 10 nodes:</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span><span class="p">&lt;</span> <span class="m">10</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
+</span><span class='line'>    <span class="n">g</span><span class="p">.</span><span class="n">AddNode</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// 10 nodes - nice; now iterate through them</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span><span class="p">&lt;</span> <span class="n">g</span><span class="p">.</span><span class="n">NodeCount</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
+</span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">Nodes</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ToString</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//  *********: Here is the issue *********:</span>
+</span><span class='line'><span class="n">g</span><span class="p">.</span><span class="n">RemoveNodeAt</span><span class="p">(</span><span class="m">4</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// 9 nodes; now iterate through them</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span><span class="p">&lt;</span> <span class="n">g</span><span class="p">.</span><span class="n">NodeCount</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
+</span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ToString</span><span class="p">())</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If the <em>IGraph</em> implementation provides the ability to access nodes by index from 0 to n-1 and we removed a node, the implementation needs to guarantee the indexing behavior.  This may require re-indexing all the nodes which is an O(n) operation.  If the graph is being implemented specifically for cases where users are just creating graphs from static data and do not require many removal operations, then this could be an acceptable solution.  Realistically, an O(n) operation is not that painful as iterating collections occurs very often.  But for large graphs with significant amounts of Add and Removal operatoins, this could impact user experience.  At the very least, such behavior and its implications should be clearly documented (in sample code as well) for the consumer.</p>
+
+<p>So back to the call for a <strong>New Graph Library for C#</strong>. The driving idea (and need) for implementing this is to provide a general purpose graph structure that is quick to pick up, intuitive to use, and straight forward to represent data.  By &ldquo;general purpose&rdquo; we are not aiming to create a graph implementation optimized for narrow use cases (e.g. speed, memory, algorithms, etc.), but rather one that can be used in a wide latitude of cases needing a graph structure (and one which will handle particular issues such as Self-Loops and Parallel Edges).  Additionally, it needs to be small, uncluttered, and it needs to “just work”.  This implies quality documentation and sample code:  Not just more documentation, but the <em>right</em> documentation.  Finally, and perhaps most importantly, this will be built for <a href="http://www.dotnetfoundation.org/">.Net Core</a> so it can run on Mac, Linux, and Windows.</p>
+
+<p>The name will inevitably come out of the initial discussions (though for some reason &ldquo;dream-graph&rdquo; with visions of flowers off of the <a href="http://scoobydoo.wikia.com/wiki/Mystery_Machine">Mystery Machine</a> have been jokingly put forth so far).  More to come and I invite you all to beat on it once the code starts flowing.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Michael Pastore</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-05-10T10:01:01-04:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:01 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/c-number/'>c#</a>, <a class='category' href='/blog/categories/graph/'>graph</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://bgrva.github.io/blog/2015/05/10/new-graph-library-for-csharp/" data-via="BgRva" data-counturl="http://bgrva.github.io/blog/2015/05/10/new-graph-library-for-csharp/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/02/19/extract-subnet-by-steps/" title="Previous Post: Snowball Extraction of a Sub-Network">&laquo; Snowball Extraction of a Sub-Network</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/05/10/new-graph-library-for-csharp/">A New Graph Library for C#</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/19/extract-subnet-by-steps/">Snowball Extraction of a Sub-Network</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/11/how-i-learned-to-love-yaml/">How I Learned to Love YAML</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/13/deploy-crawler-to-ec2-with-scrapyd/">Deploy Crawler to EC2 With Scrapyd</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/03/23/scraping-to-mongodb/">Scrapy to MongoDB</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/BgRva">@BgRva</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'BgRva',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Michael Pastore -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'BgRva';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bgrva.github.io/blog/2015/05/10/new-graph-library-for-csharp/';
+        var disqus_url = 'http://bgrva.github.io/blog/2015/05/10/new-graph-library-for-csharp/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

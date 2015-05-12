@@ -4,7 +4,7 @@
   <title><![CDATA[BgRva]]></title>
   <link href="http://bgrva.github.io/atom.xml" rel="self"/>
   <link href="http://bgrva.github.io/"/>
-  <updated>2015-05-03T12:25:39-04:00</updated>
+  <updated>2015-05-11T22:06:33-04:00</updated>
   <id>http://bgrva.github.io/</id>
   <author>
     <name><![CDATA[Michael Pastore]]></name>
@@ -12,6 +12,156 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[A New Graph Library for C#]]></title>
+    <link href="http://bgrva.github.io/blog/2015/05/10/new-graph-library-for-csharp/"/>
+    <updated>2015-05-10T10:01:01-04:00</updated>
+    <id>http://bgrva.github.io/blog/2015/05/10/new-graph-library-for-csharp</id>
+    <content type="html"><![CDATA[<p>You are probably thinking: <em>Really</em>?  Similar libraries exist and they are just fine, so why a new one?  Before I dive in to the pros and cons of this adventure, let me clarify what I mean by &ldquo;Graph&rdquo; Library. I&rsquo;m talking about a <a href="http://en.wikipedia.org/wiki/Graph_theory">graph</a> as set of nodes and edges where each edge connects two nodes.  There are several libraries available in C# that fall within this scope and they are all quite awesome. A few are listed below, but excluded are graph libraries for visualization or for specific purposes such as ontologies.</p>
+
+<ul>
+<li><a href="https://quickgraph.codeplex.com/">Quickgraph</a><br/></li>
+<li><a href="https://github.com/SolutionsDesign/Algorithmia/">Algorithmia</a><br/></li>
+</ul>
+
+
+<p>The thing about implementing a graph in code is that it is all about compromises. Some implementations may emphasize speed, extensibility, customizability, etc., but each will have its strengths and weaknesses.  For example, here is a simple case of a compromise that may arise when considering a graph implementation as an <a href="http://en.wikipedia.org/wiki/Adjacency_list">adjacency list</a>. Assume we were implementing a graph and wanted to allow consumers of the code to access the nodes by index from 0 to n-1 (where n is the number of nodes in the graph) in O(1) time.  The code samples that follow are simply interface definitions for discussion purposes, implementation details are all hand-waving.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">interface</span> <span class="n">INode</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">Index</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">interface</span> <span class="n">IGraph</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">IList</span><span class="p">&lt;</span><span class="n">INode</span><span class="p">&gt;</span> <span class="n">Nodes</span> <span class="p">{</span> <span class="k">get</span><span class="p">;}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">NodeCount</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Given an instance of IGraph g, access nodes by index</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">node1</span> <span class="p">=</span> <span class="n">g</span><span class="p">.</span><span class="n">Nodes</span><span class="p">[</span><span class="m">1</span><span class="p">];</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">node2</span> <span class="p">=</span> <span class="n">g</span><span class="p">.</span><span class="n">Nodes</span><span class="p">[</span><span class="m">2</span><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>How nodes are accessed is coupled with how nodes are added and removed.  Should we allow the user to create a node object and add the node to the graph or should we allow the graph to handle creation of the node?  Each choice has implications for the rest of the implementation.  Consider the following two approaches for adding a node:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">public</span> <span class="k">interface</span> <span class="n">IGraph</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">List</span><span class="p">&lt;</span><span class="n">INode</span><span class="p">&gt;</span> <span class="n">Nodes</span> <span class="p">{</span> <span class="k">get</span><span class="p">;}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">NodeCount</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">/// &lt;summary&gt;</span>
+</span><span class='line'>    <span class="c1">/// #1 The user creates the node and adds it to the graph object and returns</span>
+</span><span class='line'>    <span class="c1">/// the graph assigned index of the node.</span>
+</span><span class='line'>    <span class="c1">/// &lt;/summary&gt;</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="nf">AddNode</span><span class="p">(</span> <span class="n">INode</span> <span class="n">newNode</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">/// &lt;summary&gt;</span>
+</span><span class='line'>    <span class="c1">/// #2 The graph instance creates and returns the node object, with an assigned index</span>
+</span><span class='line'>    <span class="c1">/// &lt;/summary&gt;</span>
+</span><span class='line'>    <span class="n">INode</span> <span class="nf">AddNode</span><span class="p">()</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Given an instance of IGraph g:</span>
+</span><span class='line'><span class="c1">// #1</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">node1</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Node</span><span class="p">();</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">index</span> <span class="p">=</span> <span class="n">g</span><span class="p">.</span><span class="n">AddNode</span><span class="p">(</span><span class="n">node1</span><span class="p">);</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">node</span> <span class="p">=</span> <span class="n">g</span><span class="p">.</span><span class="n">Nodes</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// #2</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">g</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Graph</span><span class="p">();</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">node</span> <span class="p">=</span> <span class="n">g</span><span class="p">.</span><span class="n">AddNode</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Whereas #1 requires the user to instantiate a node, in #2 the graph maintains more control over instantiation but reduces the flexibility of where and how the user can create a node as the graph object must be instantiated first.  Both approaches still allow for accessing any node by index, but things get sticky when we consider removing a node:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="kt">var</span> <span class="n">g</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Graph</span><span class="p">();</span>
+</span><span class='line'><span class="c1">// create 10 nodes:</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span><span class="p">&lt;</span> <span class="m">10</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
+</span><span class='line'>    <span class="n">g</span><span class="p">.</span><span class="n">AddNode</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// 10 nodes - nice; now iterate through them</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span><span class="p">&lt;</span> <span class="n">g</span><span class="p">.</span><span class="n">NodeCount</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
+</span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">Nodes</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ToString</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//  *********: Here is the issue *********:</span>
+</span><span class='line'><span class="n">g</span><span class="p">.</span><span class="n">RemoveNodeAt</span><span class="p">(</span><span class="m">4</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// 9 nodes; now iterate through them</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span><span class="p">&lt;</span> <span class="n">g</span><span class="p">.</span><span class="n">NodeCount</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
+</span><span class='line'>    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ToString</span><span class="p">())</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If the <em>IGraph</em> implementation provides the ability to access nodes by index from 0 to n-1 and we removed a node, the implementation needs to guarantee the indexing behavior.  This may require re-indexing all the nodes which is an O(n) operation.  If the graph is being implemented specifically for cases where users are just creating graphs from static data and do not require many removal operations, then this could be an acceptable solution.  Realistically, an O(n) operation is not that painful as iterating collections occurs very often.  But for large graphs with significant amounts of Add and Removal operatoins, this could impact user experience.  At the very least, such behavior and its implications should be clearly documented (in sample code as well) for the consumer.</p>
+
+<p>So back to the call for a <strong>New Graph Library for C#</strong>. The driving idea (and need) for implementing this is to provide a general purpose graph structure that is quick to pick up, intuitive to use, and straight forward to represent data.  By &ldquo;general purpose&rdquo; we are not aiming to create a graph implementation optimized for narrow use cases (e.g. speed, memory, algorithms, etc.), but rather one that can be used in a wide latitude of cases needing a graph structure (and one which will handle particular issues such as Self-Loops and Parallel Edges).  Additionally, it needs to be small, uncluttered, and it needs to “just work”.  This implies quality documentation and sample code:  Not just more documentation, but the <em>right</em> documentation.  Finally, and perhaps most importantly, this will be built for <a href="http://www.dotnetfoundation.org/">.Net Core</a> so it can run on Mac, Linux, and Windows.</p>
+
+<p>The name will inevitably come out of the initial discussions (though for some reason &ldquo;dream-graph&rdquo; with visions of flowers off of the <a href="http://scoobydoo.wikia.com/wiki/Mystery_Machine">Mystery Machine</a> have been jokingly put forth so far).  More to come and I invite you all to beat on it once the code starts flowing.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Snowball Extraction of a Sub-Network]]></title>
