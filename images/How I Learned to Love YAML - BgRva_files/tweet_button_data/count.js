@@ -1,1 +1,0 @@
-/**/__twttr.receiveCount({"count":0,"url":"http:\/\/bgrva.github.io\/\/blog\/2015\/02\/11\/how-i-learned-to-love-yaml\/"});

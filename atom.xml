@@ -4,7 +4,7 @@
   <title><![CDATA[BgRva]]></title>
   <link href="http://bgrva.github.io/atom.xml" rel="self"/>
   <link href="http://bgrva.github.io/"/>
-  <updated>2015-05-11T22:06:33-04:00</updated>
+  <updated>2015-05-20T21:10:56-04:00</updated>
   <id>http://bgrva.github.io/</id>
   <author>
     <name><![CDATA[Michael Pastore]]></name>
@@ -12,6 +12,253 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using NUnit Theory for Integration Tests]]></title>
+    <link href="http://bgrva.github.io/blog/2015/05/14/nunit-theories-for-integration-tests/"/>
+    <updated>2015-05-14T09:01:11-04:00</updated>
+    <id>http://bgrva.github.io/blog/2015/05/14/nunit-theories-for-integration-tests</id>
+    <content type="html"><![CDATA[<p>NUnit TheoryAttributes (<a href="http://www.nunit.org/index.php?p=theory&amp;r=2.5">v2.5</a>, <a href="https://github.com/nunit/nunit/wiki/Theory-Attribute">v3.0b</a>) can work well for integration tests and for testing generic methods.  The integration tests I&rsquo;m referring to are those created by a developer during development:</p>
+
+<p><strong>Integration Tests</strong> are generated during development, (e.g. TDD), that are applied to units of code that have dependencies on other units</br></br>
+<strong>Unit Tests</strong> are small, highly focused tests which are applied to a unit of code in isolation</p>
+
+<p>The precise boundary of when a developer generated test is considered <em>unit</em> vs <em>integration</em> is squishy at best, and depending who you ask or where you look you will find different answers, (<a href="http://martinfowler.com/bliki/UnitTest.html">see M. Fowler</a>).  Even with this distinction between the test types, both may be implemented with the same framework (i.e. NUnit).  Ultimately, test early and test often.</p>
+
+<p>Using the TheoryAttribute allows testing a single unit for which the inputs are a bit more complex than simple parameters, and the behavior under test may have a broader range of edge cases.   Integration tests can be used to exercise a method for ‘typical’ scenarios, and I&rsquo;ve often found that trying to cover every possible scenario can be unrealistic.  From the NUnit documentation</p>
+
+<blockquote><p>A Theory is a special type of test, used to verify a general statement
+about the system under development. Normal tests are example-based.</p></blockquote>
+
+<p>   (*) as of this post, this statement is applicable to NUnit version 2.5 through the 3.0 beta.</p>
+
+<p>The code samples below are part of a project to generate Scenario objects that contain the input data for testing the functionality of a graph library (yes, I’m testing a library for testing).  The Scenarios start out as <a href="http://www.yaml.org/">YAML</a> files and are parsed to an object.  Data (of varying types) can be associated with each scenario and is read in from separate YAML data files.  All of the parsing and hard work is handled by <a href="https://github.com/aaubry/YamlDotNet">YamlDotNet</a> by Antoine Aubry.  You do not need to worry about YAML or graph functionality in the code samples below, this is just a little background.</p>
+
+<p><strong>YamlScenarioReader</strong>:  This class reads a scenario data file and returns a scenario object</p>
+
+<figure class='code'><figcaption><span>YamlScenarioReader class</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">YamlScenarioReader</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="n">Scenario</span> <span class="nf">ReadFile</span><span class="p">(</span><span class="kt">string</span> <span class="n">fileName</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">Scenario</span> <span class="n">scenario</span> <span class="p">=</span> <span class="k">null</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kt">var</span> <span class="n">deserializer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Deserializer</span><span class="p">(</span><span class="n">namingConvention</span><span class="p">:</span> <span class="k">new</span> <span class="n">CamelCaseNamingConvention</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">using</span> <span class="p">(</span><span class="kt">var</span> <span class="n">sr</span> <span class="p">=</span> <span class="k">new</span> <span class="n">StreamReader</span><span class="p">(</span><span class="n">fileName</span><span class="p">))</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="n">scenario</span> <span class="p">=</span> <span class="n">deserializer</span><span class="p">.</span><span class="n">Deserialize</span><span class="p">&lt;</span><span class="n">Scenario</span><span class="p">&gt;(</span><span class="n">sr</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="n">scenario</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Even though YamlDotNet will be doing the heavy lifting, I still want to run some tests for reading in every file as a cursory inspection of the file formats, since the test scenario files tend to change often <a href="blog/2015/02/11/how-i-learned-to-love-yaml/">post on Yaml</a>.  These are an example of what I consider integration tests.</p>
+
+<p>For reading the data, there is a corresponding reader with a T type parameter indicating the type of the underlying data to be read in.  Again, YamlDotNet is doing the hard work, all we need to do is provide a way of validating the files.</p>
+
+<figure class='code'><figcaption><span>YamlNodeDataReader class</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">YamlNodeDataReader</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">T</span><span class="p">&gt;</span> <span class="n">ReadFile</span><span class="p">(</span><span class="kt">string</span> <span class="n">fileName</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="kt">var</span> <span class="n">data</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">T</span><span class="p">&gt;();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kt">var</span> <span class="n">deserializer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Deserializer</span><span class="p">(</span><span class="n">namingConvention</span><span class="p">:</span> <span class="k">new</span> <span class="n">CamelCaseNamingConvention</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">using</span> <span class="p">(</span><span class="kt">var</span> <span class="n">sr</span> <span class="p">=</span> <span class="k">new</span> <span class="n">StreamReader</span><span class="p">(</span><span class="n">fileName</span><span class="p">))</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="n">data</span> <span class="p">=</span> <span class="n">deserializer</span><span class="p">.</span><span class="n">Deserialize</span><span class="p">&lt;</span><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">T</span><span class="p">&gt;&gt;(</span><span class="n">sr</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="n">data</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The test fixture is as follows:</p>
+
+<figure class='code'><figcaption><span>YamlNodeDataReaderFixture class</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">YamlNodeDataReaderFixture</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="na">    [TestFixture(typeof(double))]</span>
+</span><span class='line'><span class="na">    [TestFixture(typeof(DummyItem))]</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">class</span> <span class="nc">ReadFile</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'><span class="na">        [Datapoints]</span>
+</span><span class='line'>        <span class="k">public</span> <span class="n">DataFileWrapper</span><span class="p">&lt;</span><span class="kt">double</span><span class="p">&gt;[]</span> <span class="n">DataFilesOfDouble</span> <span class="p">=</span> <span class="k">new</span><span class="p">[]</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                    <span class="k">new</span> <span class="n">DataFileWrapper</span><span class="p">&lt;</span><span class="kt">double</span><span class="p">&gt;(</span><span class="s">@&quot;F:\GraphProject\DataFiles\Data\edge.A.001.double.txt&quot;</span><span class="p">),</span>
+</span><span class='line'>                    <span class="k">new</span> <span class="n">DataFileWrapper</span><span class="p">&lt;</span><span class="kt">double</span><span class="p">&gt;(</span><span class="s">@&quot;F:\GraphProject\DataFiles\Data\edge.A.002.double.txt&quot;</span><span class="p">),</span>
+</span><span class='line'>                    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="na">        [Datapoints]</span>
+</span><span class='line'>        <span class="k">public</span> <span class="n">DataFileWrapper</span><span class="p">&lt;</span><span class="n">DummyItem</span><span class="p">&gt;[]</span> <span class="n">DataFilesOfDummyItem</span> <span class="p">=</span> <span class="k">new</span><span class="p">[]</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                    <span class="k">new</span> <span class="n">DataFileWrapper</span><span class="p">&lt;</span><span class="n">DummyItem</span><span class="p">&gt;(</span><span class="s">@&quot;F:\GraphProject\DataFiles\Data\edge.A.001.DummyItem.txt&quot;</span><span class="p">),</span>
+</span><span class='line'>                    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="na">        [Theory]</span>
+</span><span class='line'>        <span class="k">public</span> <span class="k">void</span> <span class="nf">Returns_Dictionary</span><span class="p">(</span><span class="n">DataFileWrapper</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">dataFile</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="c1">//Arrange</span>
+</span><span class='line'>            <span class="kt">var</span> <span class="n">reader</span> <span class="p">=</span> <span class="n">dataFile</span><span class="p">.</span><span class="n">GetNodeReader</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">//Act    </span>
+</span><span class='line'>            <span class="kt">var</span> <span class="n">data</span> <span class="p">=</span> <span class="n">reader</span><span class="p">.</span><span class="n">ReadFile</span><span class="p">(</span><span class="n">dataFile</span><span class="p">.</span><span class="n">FileName</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">//Assert</span>
+</span><span class='line'>            <span class="n">Assert</span><span class="p">.</span><span class="n">NotNull</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="kt">var</span> <span class="n">maxKey</span> <span class="p">=</span> <span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">Keys</span><span class="p">.</span><span class="n">Select</span><span class="p">(</span><span class="n">k</span> <span class="p">=&gt;</span> <span class="n">k</span><span class="p">)).</span><span class="n">Max</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">Assert</span><span class="p">.</span><span class="n">AreEqual</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">Count</span><span class="p">,</span> <span class="n">maxKey</span> <span class="p">+</span> <span class="m">1</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">DataFileWrapper</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="nf">DataFileWrapper</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="nf">DataFileWrapper</span><span class="p">(</span><span class="kt">string</span> <span class="n">fileName</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">FileName</span> <span class="p">=</span> <span class="n">fileName</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="n">INodeDataReader</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">GetNodeReader</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="n">YamlNodeDataReader</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="n">IEdgeDataReader</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">GetEdgeReader</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="n">YamlEdgeDataReader</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">FileName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The test method annotated with the <em>Theory</em> attribute uses the data properties annotated with <em>Datapoints</em> to provide the input data.  Each <em>Datapoints</em> property should correspond to one of the types indicated in the <em>TestFixtureAttributes</em> atop the <em>ReadFile<T></em> class definition.</p>
+
+<p><strong>YamlNodeDataReaderFixture</strong> has “fixture” in its name, but it does not have a unit test attribute.  I use the convention of a class for each class under test, then subclasses for each method under test, see <a href="http://haacked.com/archive/2012/01/02/structuring-unit-tests.aspx/">Structuring Unit Tests by Phil Haack</a>.</p>
+
+<p><strong>ReadFile<T></strong> class is the test fixture for testing the ReadFile() method of YamlDotNetReader.  Each TestFixture attribute indicates what the type parameters to use for T.</p>
+
+<p><strong>DataFilesOfDouble</strong> is a property which returns an array of DataFileWrapper<double> objects for each data file containing data of type double</p>
+
+<p><strong>DataFilesOfDummyItem</strong> is a property which returns an array of DataFileWrapper<DummyITem> objects for each data file containing data of type double</p>
+
+<p><strong>Returns_Dictionary()</strong> is the test method to which the input data is applied to the ReadFile() method under test.</p>
+
+<p><strong>DummyItem</strong> is simply a class used to represent more complex data in the data files.</p>
+
+<p><strong>DataFileWrapper</strong> is a helper class needed in the example to provide a single generic input parameter to the <em>Returns_Dictionary()</em> test method and also provides methods to return which type of reader is under test based on the type of the data.  While not absolutely necessary, it makes the tests cleaner and the maintainability of the tests more robust.</p>
+
+<p>Here is an example of the output (in Resharper) showing how the embedded test classes or each method show up:</p>
+
+<p><img src="http://bgrva.github.io/images/rsharper-theory-attrib.png"></p>
+
+<p>One annoyance I have with parametized Theory tests is that there is no way to distinguish between the individual tests by the respective parameter values.  This can cause a little grief when trying to identify which parameters failed and isolate them, but it is a minor inconvenience for the ability to beat on your code with automated tests.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[A New Graph Library for C#]]></title>
