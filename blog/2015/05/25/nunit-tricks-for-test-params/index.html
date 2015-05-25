@@ -1,0 +1,585 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>NUnit Tricks for Parameterized Tests - BgRva</title>
+  <meta name="author" content="Michael Pastore">
+
+  
+  <meta name="description" content="Having spent a fair amount of time using unit test frameworks, you inevitable come up with a few tricks to make things more efficient. This post &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bgrva.github.io/blog/2015/05/25/nunit-tricks-for-test-params/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="BgRva" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">BgRva</a></h1>
+  
+    <h2>software, data, designs, &#8230;</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="bgrva.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">NUnit Tricks for Parameterized Tests</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-25T10:01:11-04:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>25</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:01 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Having spent a fair amount of time using unit test frameworks, you inevitable come up with a few tricks to make things more efficient.  This post simply describes some of those tricks that I&rsquo;ve picked up while testing code.  The examples will be done with NUnit versions 2.6, but I&rsquo;ve applied these same techniques to MBunit, XUnit, and am currently using them with the NUnit beta 3.0.</p>
+
+<h2>Test Ids to Increase Readability</h2>
+
+<p>Often, some units under test have a wide variation of input parameters and require many test cases to effectively beat on the code.  Take the following example.  Though it is contrived, it demonstrates situations I&rsquo;ve had to handle in almost every project I&rsquo;ve been involved with.  The class below has a single method to verify some input string based on a defined rule set.</p>
+
+<figure class='code'><figcaption><span>Verifyer.cs class</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Verifier</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="c1">/// &lt;summary&gt;</span>
+</span><span class='line'>    <span class="c1">/// Returns true if input contains the substring of criteria.ToUpper()</span>
+</span><span class='line'>    <span class="c1">/// or criteria.ToLower() and the qualifier occurs after the criteria.</span>
+</span><span class='line'>    <span class="c1">/// &lt;/summary&gt;</span>
+</span><span class='line'>    <span class="c1">/// &lt;param name=&quot;input&quot;&gt;The input string being validated&lt;/param&gt;</span>
+</span><span class='line'>    <span class="c1">/// &lt;param name=&quot;criteria&quot;&gt;The criteria for validating the input string&lt;/param&gt;</span>
+</span><span class='line'>    <span class="c1">/// &lt;returns&gt;bool&lt;/returns&gt;</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">bool</span> <span class="nf">Verify</span><span class="p">(</span><span class="kt">string</span> <span class="n">input</span><span class="p">,</span> <span class="kt">string</span> <span class="n">criteria</span><span class="p">,</span> <span class="kt">string</span> <span class="n">qualifier</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="kt">var</span> <span class="n">criteriaIndex</span> <span class="p">=</span> <span class="n">input</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span><span class="n">criteria</span><span class="p">.</span><span class="n">ToLower</span><span class="p">());</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="n">criteriaIndex</span> <span class="p">&lt;</span> <span class="m">0</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="n">criteriaIndex</span> <span class="p">=</span> <span class="n">input</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span><span class="n">criteria</span><span class="p">.</span><span class="n">ToUpper</span><span class="p">());</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">criteriaIndex</span> <span class="p">&gt;=</span> <span class="m">0</span> <span class="p">&amp;&amp;</span> <span class="n">input</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span><span class="n">qualifier</span><span class="p">,</span> <span class="n">criteriaIndex</span><span class="p">)</span> <span class="p">&gt;</span> <span class="n">criteriaIndex</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Effective unit tests for the code above would need to test for cases returning <em>true</em>, <em>false</em>, and <em>error</em> cases, (I would normally generate the tests before the method, but for simplicity I will dispense with preaching TDD).  For the <em>true</em> cases, here are several approaches using NUnit, (for brevity&rsquo;s sake, I have not included all possible variations of input parameters to test for <em>true</em>).</p>
+
+<figure class='code'><figcaption><span>VerifierFixture.cs class</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="na">[TestFixture]</span>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">VerifierFixture</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="na">    [TestCase(0, &quot;blahA blah&quot;, &quot;blah&quot;, &quot;A&quot;)]</span>
+</span><span class='line'><span class="na">    [TestCase(1, &quot;blah Ablah&quot;, &quot;blah&quot;, &quot;A&quot;)]</span>
+</span><span class='line'><span class="na">    [TestCase(2, &quot;blah blahA&quot;, &quot;blah&quot;, &quot;A&quot;)]</span>
+</span><span class='line'><span class="na">    [TestCase(3, &quot;AblahA blah&quot;, &quot;blah&quot;, &quot;A&quot;)]</span>
+</span><span class='line'><span class="na">    [TestCase(4, &quot;Ablah Ablah&quot;, &quot;blah&quot;, &quot;A&quot;)]</span>
+</span><span class='line'><span class="na">    [TestCase(5, &quot;Ablah blahA&quot;, &quot;blah&quot;, &quot;A&quot;)]</span>
+</span><span class='line'>    <span class="c1">// more ...</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">void</span> <span class="nf">IsValid_Returns_True_By_TestCase</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">string</span> <span class="n">input</span><span class="p">,</span> <span class="kt">string</span> <span class="n">criteria</span><span class="p">,</span> <span class="kt">string</span> <span class="n">qualifier</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//Arrange</span>
+</span><span class='line'>        <span class="kt">var</span> <span class="n">validator</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Verifier</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//Act</span>
+</span><span class='line'>        <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">validator</span><span class="p">.</span><span class="n">Verify</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">criteria</span><span class="p">,</span> <span class="n">qualifier</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//Assert</span>
+</span><span class='line'>        <span class="n">Assert</span><span class="p">.</span><span class="n">True</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="na">    [Test, TestCaseSource(&quot;VerifyCasesThatAreTrue&quot;)]</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">void</span> <span class="nf">IsValid_Returns_True_By_TestCaseSource</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="kt">string</span> <span class="n">input</span><span class="p">,</span> <span class="kt">string</span> <span class="n">criteria</span><span class="p">,</span> <span class="kt">string</span> <span class="n">qualifier</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//Arrange</span>
+</span><span class='line'>        <span class="kt">var</span> <span class="n">validator</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Verifier</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//Act</span>
+</span><span class='line'>        <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">validator</span><span class="p">.</span><span class="n">Verify</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">criteria</span><span class="p">,</span> <span class="n">qualifier</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//Assert</span>
+</span><span class='line'>        <span class="n">Assert</span><span class="p">.</span><span class="n">True</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">static</span> <span class="kt">object</span><span class="p">[]</span> <span class="n">VerifyCasesThatAreTrue</span> <span class="p">=</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">0</span><span class="p">,</span> <span class="s">&quot;blahA blah&quot;</span><span class="p">,</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">1</span><span class="p">,</span> <span class="s">&quot;blah Ablah&quot;</span><span class="p">,</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">2</span><span class="p">,</span> <span class="s">&quot;blah blahA&quot;</span><span class="p">,</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">3</span><span class="p">,</span> <span class="s">&quot;AblahA blah&quot;</span><span class="p">,</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">4</span><span class="p">,</span> <span class="s">&quot;Ablah Ablah&quot;</span><span class="p">,</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">5</span><span class="p">,</span> <span class="s">&quot;Ablah blahA&quot;</span><span class="p">,</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="c1">// more ...</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Both test methods in the fixture above perform the same tests, but each handles the multiple test inputs using different features of NUnit.  You will notice a unique id associated with each test input, this is one of those &lsquo;tricks&rsquo; I picked up.  By assigning a unique id for test methods with multiple inputs, you can quickly find a specific test case.  For example, here is an image of the NUnit runner output with ids and it is easy to identify <em>in the code</em> the specific test cases which fail.</p>
+
+<p><img src="/images/nunit-runs-uniqueids.jpg"></p>
+
+<p>When should you use unique ids with your parameterized test cases?  This is completely up to your style of test kung-fu.  If it helps your more efficiently beat on your code then by all means do it.</p>
+
+<h2>Overriding ToString() in Complex Parameters</h2>
+
+<p>While NUnit recognizes the individual test parameters and consequently each individual test cast, it does not  effectively present this information to the user.  For example, lets say there is an additional Verify() method that takes in a custom object called <em>UserItem</em> as a parameter.  UserItem is a stand in for any POCO that you may need to validate.</p>
+
+<figure class='code'><figcaption><span>Verifier.cs and UserItem.cs</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">Verifier</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">bool</span> <span class="nf">Verify</span><span class="p">(</span><span class="kt">string</span> <span class="n">input</span><span class="p">,</span> <span class="kt">string</span> <span class="n">criteria</span><span class="p">,</span> <span class="kt">string</span> <span class="n">qualifier</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="kt">var</span> <span class="n">criteriaIndex</span> <span class="p">=</span> <span class="n">input</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span><span class="n">criteria</span><span class="p">.</span><span class="n">ToLower</span><span class="p">());</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="n">criteriaIndex</span> <span class="p">&lt;</span> <span class="m">0</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="n">criteriaIndex</span> <span class="p">=</span> <span class="n">input</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span><span class="n">criteria</span><span class="p">.</span><span class="n">ToUpper</span><span class="p">());</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">criteriaIndex</span> <span class="p">&gt;</span> <span class="m">0</span> <span class="p">&amp;&amp;</span> <span class="n">input</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span><span class="n">qualifier</span><span class="p">,</span> <span class="n">criteriaIndex</span><span class="p">)</span> <span class="p">&gt;</span> <span class="n">criteriaIndex</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//New Method</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">bool</span> <span class="nf">Verify</span><span class="p">(</span><span class="n">UserItem</span> <span class="n">input</span><span class="p">,</span> <span class="kt">string</span> <span class="n">criteria</span><span class="p">,</span> <span class="kt">string</span> <span class="n">qualifier</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nf">Verify</span><span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">criteria</span><span class="p">,</span> <span class="n">qualifier</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">UserItem</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="n">DateTime</span> <span class="n">TimeStamp</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">SomeThing</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In order to set up multiple test cases for this new method, we are unable to use the <a href="http://nunit.org/index.php?p=testCase&amp;r=2.5">TestCaseAttribute</a> out of the box since we cannot embed a UserItem constructor in an attribute.  But, we can still use the <a href="http://nunit.org/index.php?p=testCaseSource&amp;r=2.5">TestCaseSourceAttribute</a> like so:</p>
+
+<figure class='code'><figcaption><span>VerifyByUserItemFixture.cs</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="na">[TestFixture]</span>
+</span><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">VerifyByUserItemFixture</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="na">    [Test, TestCaseSource(&quot;VerifyCasesThatAreTrue&quot;)]</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">void</span> <span class="nf">IsValid_Returns_True_By_TestCaseSource</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="n">UserItem</span> <span class="n">input</span><span class="p">,</span> <span class="kt">string</span> <span class="n">criteria</span><span class="p">,</span> <span class="kt">string</span> <span class="n">qualifier</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//Arrange</span>
+</span><span class='line'>        <span class="kt">var</span> <span class="n">validator</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Verifier</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//Act</span>
+</span><span class='line'>        <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="n">validator</span><span class="p">.</span><span class="n">Verify</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">criteria</span><span class="p">,</span> <span class="n">qualifier</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//Assert</span>
+</span><span class='line'>        <span class="n">Assert</span><span class="p">.</span><span class="n">True</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">static</span> <span class="kt">object</span><span class="p">[]</span> <span class="n">VerifyCasesThatAreTrue</span> <span class="p">=</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">0</span><span class="p">,</span> <span class="k">new</span> <span class="n">UserItem</span><span class="p">()</span> <span class="p">{</span> <span class="n">Name</span> <span class="p">=</span> <span class="s">&quot;blahA blah&quot;</span> <span class="p">},</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">1</span><span class="p">,</span>  <span class="k">new</span> <span class="n">UserItem</span><span class="p">()</span> <span class="p">{</span> <span class="n">Name</span><span class="p">=</span> <span class="s">&quot;blah Ablah&quot;</span> <span class="p">},</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">2</span><span class="p">,</span>  <span class="k">new</span> <span class="n">UserItem</span><span class="p">()</span> <span class="p">{</span> <span class="n">Name</span><span class="p">=</span> <span class="s">&quot;blah blahA&quot;</span> <span class="p">},</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">3</span><span class="p">,</span>  <span class="k">new</span> <span class="n">UserItem</span><span class="p">()</span> <span class="p">{</span> <span class="n">Name</span><span class="p">=</span> <span class="s">&quot;AblahA blah&quot;</span> <span class="p">},</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">4</span><span class="p">,</span>  <span class="k">new</span> <span class="n">UserItem</span><span class="p">()</span> <span class="p">{</span> <span class="n">Name</span><span class="p">=</span> <span class="s">&quot;Ablah Ablah&quot;</span> <span class="p">},</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="k">new</span> <span class="kt">object</span><span class="p">[]</span> <span class="p">{</span><span class="m">5</span><span class="p">,</span>  <span class="k">new</span> <span class="n">UserItem</span><span class="p">()</span> <span class="p">{</span> <span class="n">Name</span><span class="p">=</span> <span class="s">&quot;Ablah blahA&quot;</span> <span class="p">},</span> <span class="s">&quot;blah&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">},</span>
+</span><span class='line'>        <span class="c1">// more ...</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When you look at the output you will notice that although NUnit identifies the individual test cases, it displays each UserItem by the default ToString() implementation:</p>
+
+<p><img src="/images/nunit-runs-useritems.jpg"></p>
+
+<p>To improve the readability of each test, you can override the ToString() method:</p>
+
+<figure class='code'><figcaption><span>UserItem.cs with ToString() override</span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="k">public</span> <span class="k">class</span> <span class="nc">UserItem</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="n">DateTime</span> <span class="n">TimeStamp</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="kt">string</span> <span class="n">SomeThing</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">override</span> <span class="kt">string</span> <span class="nf">ToString</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">&quot;{0};{1};{2}&quot;</span><span class="p">,</span> <span class="n">Name</span><span class="p">,</span> <span class="n">TimeStamp</span><span class="p">,</span> <span class="n">SomeThing</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="/images/nunit-runs-useritems-tostring.jpg"></p>
+
+<p>NUnit uses the parameters to differentiate individual test cases. If you do override ToString(), to preclude NUnit from skipping test cases it considers duplicates then you need to ensure the override of ToString() returns unique values for each object, or use the separate id parameter technique mentioned earlier.  Using the id will guarantee each input results in an individual test even if the ToString() override does not provide unique strings for each object.</p>
+
+<p>Just a few tricks that may help you in your code writing endeavors.  Test early &amp; test often:  the more you beat on your code the stronger is the force in you.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Michael Pastore</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-05-25T10:01:11-04:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>25</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:01 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/c-number/'>c#</a>, <a class='category' href='/blog/categories/nunit/'>nunit</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://bgrva.github.io/blog/2015/05/25/nunit-tricks-for-test-params/" data-via="BgRva" data-counturl="http://bgrva.github.io/blog/2015/05/25/nunit-tricks-for-test-params/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/05/14/nunit-theories-for-integration-tests/" title="Previous Post: Using NUnit Theory for Integration Tests">&laquo; Using NUnit Theory for Integration Tests</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/05/25/nunit-tricks-for-test-params/">NUnit Tricks for Parameterized Tests</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/14/nunit-theories-for-integration-tests/">Using NUnit Theory for Integration Tests</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/10/new-graph-library-for-csharp/">A New Graph Library for C#</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/19/extract-subnet-by-steps/">Snowball Extraction of a Sub-Network</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/11/how-i-learned-to-love-yaml/">How I Learned to Love YAML</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/BgRva">@BgRva</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'BgRva',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Michael Pastore -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'BgRva';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://bgrva.github.io/blog/2015/05/25/nunit-tricks-for-test-params/';
+        var disqus_url = 'http://bgrva.github.io/blog/2015/05/25/nunit-tricks-for-test-params/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
